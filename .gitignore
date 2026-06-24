@@ -1,0 +1,19 @@
+# Arduino / Embedded systems build artifacts
+*.hex
+*.elf
+*.o
+*.a
+*.d
+*.o.d
+*.d.d
+build/
+bin/
+out/
+.vscode/
+.idea/
+
+# Local/OS files
+.DS_Store
+Thumbs.db
+*.bak
+*~
