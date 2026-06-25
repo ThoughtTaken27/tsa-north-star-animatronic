@@ -36,14 +36,14 @@ git add docs/postmortem_failure_log.md
 
 # Stage the firmware source files individually
 git add tsa-north-star-animatronic.ino
-git add firmware/Sensors.h
-git add firmware/Sensors.cpp
-git add firmware/Actuators.h
-git add firmware/Actuators.cpp
-git add firmware/AudioController.h
-git add firmware/AudioController.cpp
-git add firmware/StateEngine.h
-git add firmware/StateEngine.cpp
+git add src/Sensors.h
+git add src/Sensors.cpp
+git add src/Actuators.h
+git add src/Actuators.cpp
+git add src/AudioController.h
+git add src/AudioController.cpp
+git add src/StateEngine.h
+git add src/StateEngine.cpp
 
 # Verify staged files (ensure no build files or DS_Store are listed)
 git status
@@ -95,7 +95,7 @@ Since admissions reviewers spend less than three minutes reviewing portfolios, a
     *   Add and commit the file individually: `git add docs/assets/demo_hook.gif`.
     *   Embed the GIF at the top of your `README.md` by replacing the visual placeholder with:
         ```markdown
-        ![The North Star Demo](./docs/assets/demo_hook.gif)
+        ![The North Star Demo](./assets/demo_hook.gif)
         ```
 *   **Option B (YouTube Embed fallback):** Upload the high-quality 15-second clip to YouTube as an "Unlisted" video (to keep it clean) and link it in the README with a high-resolution thumbnail preview.
 

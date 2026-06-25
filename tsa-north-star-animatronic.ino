@@ -11,10 +11,10 @@
  * Completion Date: May 2026 — 1st Place Tennessee State Championship
  */
 
-#include "firmware/Sensors.h"
-#include "firmware/Actuators.h"
-#include "firmware/AudioController.h"
-#include "firmware/StateEngine.h"
+#include "src/Sensors.h"
+#include "src/Actuators.h"
+#include "src/AudioController.h"
+#include "src/StateEngine.h"
 
 // --- Pin Allocations (See hardware/bom.md) ---
 const uint8_t PIN_PIR_SENSOR = 2;   // Input from PIR sensor

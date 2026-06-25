@@ -24,14 +24,14 @@ required_files = [
     "hardware/mechanical_assembly.md",
     "hardware/fluid_power_system.md",
     "tsa-north-star-animatronic.ino",
-    "firmware/Sensors.h",
-    "firmware/Sensors.cpp",
-    "firmware/Actuators.h",
-    "firmware/Actuators.cpp",
-    "firmware/AudioController.h",
-    "firmware/AudioController.cpp",
-    "firmware/StateEngine.h",
-    "firmware/StateEngine.cpp"
+    "src/Sensors.h",
+    "src/Sensors.cpp",
+    "src/Actuators.h",
+    "src/Actuators.cpp",
+    "src/AudioController.h",
+    "src/AudioController.cpp",
+    "src/StateEngine.h",
+    "src/StateEngine.cpp"
 ]
 
 all_passed = True

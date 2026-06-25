@@ -82,11 +82,11 @@ Simultaneous servo acceleration pulls peak transient current spikes exceeding 4A
 The assets inside this repository are organized as follows:
 
 *   [**`tsa-north-star-animatronic.ino`**](./tsa-north-star-animatronic.ino) — Main Arduino sketch, entry point, system setup, and non-blocking loop scheduler.
-*   [**`/firmware`**](./firmware/) — Fully modular C++ code classes.
-    *   [`StateEngine.h`](./firmware/StateEngine.h) / [`.cpp`](./firmware/StateEngine.cpp): The Finite State Machine coordinator (Idle -> Speaking -> Hydraulic Tilt -> Return to Home).
-    *   [`Actuators.h`](./firmware/Actuators.h) / [`.cpp`](./firmware/Actuators.cpp): Custom servo wrapping class implementing velocity speed-ramping profiles.
-    *   [`Sensors.h`](./firmware/Sensors.h) / [`.cpp`](./firmware/Sensors.cpp): Temporal filter class debouncing high-impedance PIR input lines.
-    *   [`AudioController.h`](./firmware/AudioController.h) / [`.cpp`](./firmware/AudioController.cpp): Direct serial communicator managing MP3 playback command packets.
+*   [**`/src`**](./src/) — Fully modular C++ code classes.
+    *   [`StateEngine.h`](./src/StateEngine.h) / [`.cpp`](./src/StateEngine.cpp): The Finite State Machine coordinator (Idle -> Speaking -> Hydraulic Tilt -> Return to Home).
+    *   [`Actuators.h`](./src/Actuators.h) / [`.cpp`](./src/Actuators.cpp): Custom servo wrapping class implementing velocity speed-ramping profiles.
+    *   [`Sensors.h`](./src/Sensors.h) / [`.cpp`](./src/Sensors.cpp): Temporal filter class debouncing high-impedance PIR input lines.
+    *   [`AudioController.h`](./src/AudioController.h) / [`.cpp`](./src/AudioController.cpp): Direct serial communicator managing MP3 playback command packets.
 *   [**`/hardware`**](./hardware/) — Wiring diagrams, mechanical assemblies, fluid power physics, and budgets.
     *   [`bom.md`](./hardware/bom.md): Tabulated Bill of Materials, Arduino I/O pin mapping, and power budget profiles.
     *   [`mechanical_assembly.md`](./hardware/mechanical_assembly.md): Structural details, torso MDF frame, and neck universal joint rigging.
