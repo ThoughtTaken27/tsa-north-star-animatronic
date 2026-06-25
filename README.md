@@ -81,18 +81,24 @@ Simultaneous servo acceleration pulls peak transient current spikes exceeding 4A
 
 The assets inside this repository are organized as follows:
 
-*   [**`/firmware`**](./firmware/) — Fully modular C++ code.
-    *   [`firmware.ino`](./firmware/firmware.ino): Entry point, system setup, and non-blocking loop scheduler.
+*   [**`tsa-north-star-animatronic.ino`**](./tsa-north-star-animatronic.ino) — Main Arduino sketch, entry point, system setup, and non-blocking loop scheduler.
+*   [**`/firmware`**](./firmware/) — Fully modular C++ code classes.
     *   [`StateEngine.h`](./firmware/StateEngine.h) / [`.cpp`](./firmware/StateEngine.cpp): The Finite State Machine coordinator (Idle -> Speaking -> Hydraulic Tilt -> Return to Home).
     *   [`Actuators.h`](./firmware/Actuators.h) / [`.cpp`](./firmware/Actuators.cpp): Custom servo wrapping class implementing velocity speed-ramping profiles.
     *   [`Sensors.h`](./firmware/Sensors.h) / [`.cpp`](./firmware/Sensors.cpp): Temporal filter class debouncing high-impedance PIR input lines.
     *   [`AudioController.h`](./firmware/AudioController.h) / [`.cpp`](./firmware/AudioController.cpp): Direct serial communicator managing MP3 playback command packets.
-*   [**`/hardware`**](./hardware/) — Wiring diagrams, pin allocations, and power consumption calculations.
+*   [**`/hardware`**](./hardware/) — Wiring diagrams, mechanical assemblies, fluid power physics, and budgets.
     *   [`bom.md`](./hardware/bom.md): Tabulated Bill of Materials, Arduino I/O pin mapping, and power budget profiles.
+    *   [`mechanical_assembly.md`](./hardware/mechanical_assembly.md): Structural details, torso MDF frame, and neck universal joint rigging.
+    *   [`fluid_power_system.md`](./hardware/fluid_power_system.md): Closed-loop master-slave syringe hydraulic cylinder calculations and O-ring seals.
     *   [`schematics/system_schematic_ascii.txt`](./hardware/schematics/system_schematic_ascii.txt): Detailed ASCII electrical schematic.
-*   [**`/docs`**](./docs/) — Mechanical building guides and systematic debugging logs.
-    *   [`assembly_guide.md`](./docs/assembly_guide.md): Skeleton composition instructions, double-O-ring syringe plunger modifications, and servo angle calibration boundaries.
+*   [**`/docs`**](./docs/) — Historical contexts, competition rubrics, and systematic failure logs.
     *   [`postmortem_failure_log.md`](./docs/postmortem_failure_log.md): Analysis of the 87 micro-fixes, categorized into four primary electrical, mechanical, electromagnetic, and fluidic engineering failures.
+    *   [`voltage_drop_analysis.md`](./docs/voltage_drop_analysis.md): Deep-dive electrical report on transient voltage sags and capacitive decoupling.
+    *   [`competition_math.md`](./docs/competition_math.md): Strategic optimization analysis of the high-weight scoring rubric.
+    *   [`historical_context.md`](./docs/historical_context.md): Deep-dive on the historical background of Harriet Tubman and "The North Star" theme.
+    *   [`engineering_notebook.md`](./docs/engineering_notebook.md): Timeline diary, team structure, and daily development log.
+    *   [`assembly_guide.md`](./docs/assembly_guide.md): Quick-start physical calibration limits and hardware safe boundary rules.
 
 ---
 
@@ -111,7 +117,7 @@ Real engineering is demonstrated by the ability to systematically troubleshoot p
 
 To flash the code and set up the diagnostic serial telemetry:
 
-1.  Open [**`firmware/firmware.ino`**](./firmware/firmware.ino) in the Arduino IDE (or compile using the Arduino CLI).
+1.  Open [**`tsa-north-star-animatronic.ino`**](./tsa-north-star-animatronic.ino) in the Arduino IDE (or compile using the Arduino CLI).
 2.  Install the standard `Servo` library.
 3.  Connect the Arduino Uno R3 via USB.
 4.  Select `Arduino Uno` under **Tools > Board** and choose your COM/Serial Port.

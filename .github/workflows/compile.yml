@@ -25,4 +25,4 @@ jobs:
 
       - name: Compile Sketch
         run: |
-          arduino-cli compile --fqbn arduino:avr:uno firmware/firmware.ino
+          arduino-cli compile --fqbn arduino:avr:uno tsa-north-star-animatronic.ino

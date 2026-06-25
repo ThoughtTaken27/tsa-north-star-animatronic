@@ -35,7 +35,7 @@ git add docs/assembly_guide.md
 git add docs/postmortem_failure_log.md
 
 # Stage the firmware source files individually
-git add firmware/firmware.ino
+git add tsa-north-star-animatronic.ino
 git add firmware/Sensors.h
 git add firmware/Sensors.cpp
 git add firmware/Actuators.h
