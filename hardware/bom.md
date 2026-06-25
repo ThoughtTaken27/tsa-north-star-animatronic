@@ -10,20 +10,23 @@ The physical system uses off-the-shelf components modified for custom mechanical
 
 | Part Name | Model/Spec | Qty | Unit Cost | Source | System Role | Operating Voltage | Current Draw (Idle / Peak) |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Microcontroller** | Arduino Uno R3 (ATmega328P) | 1 | $23.00 | Arduino | Core system logic and timing sequence coordination | 5.0V | 45mA / 50mA |
-| **High-Torque Servo** | TowerPro MG996R | 3 | $7.50 | Amazon | Actuating heavy mechanical linkages (Neck Pitch, Neck Yaw, Jaw Move) | 6.0V | 10mA (idle) / 2.5A (stall) |
+| **Microcontroller** | Arduino Uno R3 (ATmega328P) | 1 | $23.00 | Arduino | Core system logic and timing coordination | 5.0V | 45mA / 50mA |
+| **High-Torque Servo** | TowerPro MG996R | 3 | $7.50 | Amazon | Neck Yaw, Neck Pitch (hydraulic), Jaw Move | 6.0V | 10mA (idle) / 2.5A (stall) |
 | **Standard Servo** | SG90 Micro Servo | 1 | $3.00 | Amazon | Actuating light linkage (Eye Move) | 5.0V | 5mA (idle) / 650mA (stall) |
-| **Audio Module** | DFPlayer Mini MP3 Player | 1 | $4.50 | Amazon | Storing and playing voice sequences and background track | 5.0V | 15mA (idle) / 500mA (peak speaker load) |
+| **Audio Module** | DFPlayer Mini MP3 Player | 1 | $4.50 | Amazon | Storing and playing voice sequence | 5.0V | 15mA (idle) / 500mA (peak speaker load) |
+| **SD Card** | 16GB MicroSD (Patriot) | 1 | $5.00 | Amazon | Stores MP3 audio files in folder named "mp3" on FAT32 | N/A | N/A |
 | **Motion Sensor** | HC-SR501 PIR Sensor | 1 | $2.50 | Adafruit | Detecting user presence to trigger the sequence | 5.0V | 50µA / 15mA |
 | **Speaker** | 8 Ohm, 3W, 2-inch | 1 | $4.00 | Adafruit | Audio output for voice files | 5.0V | N/A (passive) |
-| **Piston Syringes** | 60ml Luer Lock Medical Syringe | 2 | $1.50 | Local supplier | Custom hydraulic actuators for smooth neck tilt movement | N/A | N/A |
-| **Hydraulic Fluid** | Distilled Water + Water-Glycol Dye | 1L | $2.00 | Hardware store | Fluid medium for linear syringe actuation | N/A | N/A |
-| **Decoupling Capacitor** | 1000µF 16V Electrolytic | 2 | $0.50 | DigiKey | Buffering voltage drops on motor power rails during rapid acceleration | N/A | N/A |
-| **Pull-down Resistor** | 10k Ohm Metal Film | 1 | $0.05 | DigiKey | Stiffening PIR sensor output against EMI noise | N/A | N/A |
-| **Inline Resistor** | 1k Ohm Metal Film | 2 | $0.05 | DigiKey | Reducing current and noise on TX/RX SoftwareSerial lines | N/A | N/A |
-| **Power Supply** | 5V/6V Dual Output AC-DC Adapter | 1 | $15.00 | Amazon | Isolated supplies: 5V for logic, 6V (3A peak) for motors | N/A | N/A (wall supply) |
+| **Piston Syringes** | 60ml Luer Lock Medical Syringe | 2 | $1.50 | Local supplier | Hydraulic actuators for neck tilt | N/A | N/A |
+| **PVC Tubing** | 3/16" ID Clear Vinyl Tubing | 1m | $2.00 | Hardware store | Fluid transmission line between syringes | N/A | N/A |
+| **Popsicle Sticks** | Standard Craft Sticks | 3 | $0.10 | Craft store | Linkage connectors between servo horns and syringe plungers | N/A | N/A |
+| **Hydraulic Fluid** | Distilled Water with Blue Food Coloring | 0.5L | $1.00 | Grocery store | Fluid medium for syringe actuation | N/A | N/A |
+| **Decoupling Capacitor** | 1000µF 25V Electrolytic | 1 | $0.50 | DigiKey | Buffering voltage drops on servo power rail during acceleration | N/A | N/A |
+| **Voltage Divider Resistor** | 680Ω Metal Film | 1 | $0.05 | DigiKey | Voltage divider for DFPlayer RX (3.3V logic from 5V Arduino) | N/A | N/A |
+| **Voltage Divider Resistor** | 1KΩ Metal Film | 1 | $0.05 | DigiKey | Voltage divider ground leg for DFPlayer RX line | N/A | N/A |
+| **Battery Pack** | 4×AA Battery Holder | 1 | $2.00 | Amazon | 6V servo power supply (4 × 1.5V AA batteries) | 6.0V | N/A |
 
-*Total Estimated Hardware Cost: ~$74.15*
+*Total Estimated Hardware Cost: ~$67.75*
 
 ---
 
@@ -63,9 +66,10 @@ Unregulated power routing to high-torque servos is the primary cause of system r
    - SG90 Micro Servo (peak load): **650mA**
    - **Total Peak Motor Load:** **4.25A** (during sequence initiation when multiple joints accelerate from rest).
 
-### Isolation Strategy
+### Power Architecture
 
-To protect the ATmega328P microcontroller from logic resets (brownouts) caused by inductive motor spikes and massive current draw:
-- **Separate Transformers:** The AC-DC adapter delivers two isolated rails: a 5V supply dedicated solely to the Arduino and the DFPlayer Mini, and a 6V 5A power rail dedicated to the motor terminal blocks.
-- **Common Ground:** The 5V logic ground and 6V motor ground connect at a single point (star ground) near the Arduino power jack. This prevents ground loops and reference float.
-- **Capacitive Buffering:** A 1000µF electrolytic capacitor is wired in parallel directly across the 6V motor power distribution rail to supply instantaneous current during high-acceleration spikes, preventing local voltage sag.
+The Arduino is powered via USB (5V from laptop, phone charger, or USB power bank). The three MG996R servos draw power from a dedicated 4×AA battery pack (1.5V × 4 = 6V). The Arduino and battery pack share a common ground connection to keep signal references in sync.
+
+- **Servo Power:** 4×AA battery holder outputting ~6V. Batteries provide enough current for the MG996R servos under mid-load without pulling down the Arduino's 5V rail.
+- **Common Ground:** Arduino GND connected to battery pack GND — required so PWM signals share a reference.
+- **Capacitive Buffering:** A 1000µF 25V electrolytic capacitor wired across the servo power rail to buffer transient current spikes during servo acceleration.

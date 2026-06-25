@@ -10,9 +10,9 @@ The mechanical skeleton of the Harriet Tubman bust balances weight constraints w
 
 ### Material Specifications
 - **Core Chassis:** 6mm thick medium-density fiberboard (MDF) laser-cut into a rigid box frame to act as the ribcage and shoulder mount.
-- **Head Skeleton:** 3D-printed internal skull cap (PLA, 15% infill, 3 perimeters) to secure mounting points for the eye-shifter and jaw servos.
-- **Skin Layer:** Soft-pour platinum-cured silicone shell painted to match historical likeness.
-- **Neck Pivot:** Dual-axis universal joint (U-joint) machined from aluminum. This isolates rotational forces (Yaw) from linear tilt forces (Pitch).
+- **Head Skeleton:** Internal frame to secure mounting points for the eye-shifter and jaw servos.
+- **Skin Layer:** Painted silicone shell to match historical likeness.
+- **Neck Pivot:** Dual-axis universal joint (U-joint). This isolates rotational forces (Yaw) from linear tilt forces (Pitch).
 
 ---
 
@@ -43,15 +43,14 @@ To achieve silent, smooth neck rise-and-fall movement without the loud gear whin
 ```
 
 ### Fluid Link Specifications
-- **Master Syringes (Driver):** Two 60ml Luer Lock medical-grade polypropylene syringes mounted inside the torso frame.
+- **Master Syringes (Driver):** Two 60ml Luer Lock syringes mounted inside the torso frame.
 - **Slave Syringes (Driven):** Two matching 60ml syringes mounted vertically behind the neck U-joint.
 - **Transmission Lines:** 4.8mm (3/16 inch) inner diameter clear PVC tubing secured to syringe Luer lock tips with stainless steel zip-ties.
-- **Fluid Medium:** Distilled water mixed with blue-tinted water-glycol food coloring. The blue dye provides visual confirmation of fluid path continuity and flow velocity. Water-glycol prevents internal microbial growth and lubricates plunger seals.
+- **Fluid Medium:** Distilled water with blue food coloring for visibility.
 
 ### Plunger-Servo Linkage
-1. **Mechanical Leverage:** The plunger of the master syringe connects to the horn of the MG996R servo via an adjustable threaded M3 aluminum linkage rod.
-2. **Double O-Ring Seal:** Polypropylene syringes tend to bleed pressure past standard single rubber seals under continuous load. The master and slave plungers are retrofitted with custom-greased double nitrile O-rings (15mm ID, 2.5mm width) to ensure air-tight, water-tight boundaries.
-3. **Piston Displacement math:** The MG996R has an effective 120-degree sweep under control. This rotational sweep drives the plunger through a 35mm linear displacement, translating to ~12ml of fluid movement. This displacement is sufficient to tilt the neck joint up to 25 degrees.
+1. **Mechanical Linkage:** The plunger of the master syringe connects to the MG996R servo horn via a popsicle stick linkage, aligned for straight-line push along the plunger axis.
+2. **Piston Displacement:** The MG996R's 120-degree sweep drives the plunger through ~35mm linear travel, displacing enough fluid to tilt the neck joint.
 
 ---
 

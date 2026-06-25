@@ -1,113 +1,121 @@
-========================================================================================
+==========================================================================
 ELECTRICAL WIRING SCHEMATIC — "THE NORTH STAR" HARRIET TUBMAN ANIMATRONIC
-========================================================================================
+==========================================================================
 
-+--------------------------------------------------------------------------------------+
-| 1. POWER SYSTEM: TWO ISOLATED POWER RAILS WITH STAR GROUND                           |
-+--------------------------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| 1. POWER SYSTEM: SEPARATE SOURCES WITH COMMON GROUND                 |
++----------------------------------------------------------------------+
 
-  AC/DC DUAL SUPPLY ADAPTER
-  +───────────────────────+
-  │                       │   [VCC 5V] (RED)  ───────────> To Logic Bus (Arduino, DFPlayer, PIR)
-  │  [5V DC, 2A Regulator]├─────────────────────────────
-  │                       │
-  │  [Common Ground 0V]   ├───────────────────────┐
-  │                       │                       │ (Star Ground Junction)
-  │  [6V DC, 5A Regulator]├───────────────┐       │
-  │                       │               │ (6V)  │ (0V GND)
-  +───────────────────────+               │       │
-                                          ▼       ▼
-                                        +───────────+
-                                        │[CAPACITOR]│ 1000uF 16V Electrolytic Bulk Capacitor
-                                        │  (1000uF) │ (Buffers Servo transient voltage sag)
-                                        +───────────+
-                                          │       │
-                                          │(6V)   │(GND)
-                                          ▼       ▼
-                                       =============  Motor Power Bus Rail
-                                        6V     GND
+  ARDUINO POWER (5V via USB)
+  +─────────────────+       [VCC 5V] (from USB) ==> Arduino 5V rail
+  │ LAPTOP / USB    │       [GND 0V]  (from USB) ==> Arduino GND
+  │ POWER BANK      │
+  +─────────────────+
 
+  SERVO POWER (6V via Battery Pack)
+  +─────────────────+
+  │  4×AA BATTERY   │  (1.5V × 4 = 6V)
+  │  PACK (6V)      ├───────┐
+  +─────────────────+       │
+                            │
+                            ▼
+                      +-----------+
+                      │ 1000uF    │ 25V Electrolytic Capacitor
+                      │ CAPACITOR │ (across + and - rails)
+                      +-----------+
+                        │      │
+                     (6V+)  (GND)
+                        │      │
+                        ▼      ▼
+                     =============  Servo Power Rail
+                      6V+    GND
 
-+--------------------------------------------------------------------------------------+
-| 2. CORE SYSTEM WIRING: ARDUINO UNO, SENSORS, ACTUATORS & COMMunications             |
-+--------------------------------------------------------------------------------------+
+  COMMON GROUND POINT
+  Arduino GND ────────♦──────── Battery Pack GND
+                       (one connection point)
 
-              +─────────────────────────────────────────────────────────+
-              │                     ARDUINO UNO R3                      │
-              │                                                         │
-              │  [D2]  ──(Digital Input)────────────────────────┐       │
-              │  [D5]  ──(PWM Output)─────────────────────┐      │       │
-              │  [D6]  ──(PWM Output)───────────────┐     │      │       │
-              │  [D9]  ──(PWM Output)─────────┐     │     │      │       │
-              │  [D10] ──(Software RX)──┐     │     │     │      │       │
-              │  [D11] ──(Software TX)──┼─┐   │     │     │      │       │
-              │  [D12] ──(Digital I/O)──┼─┼─┐ │     │     │      │       │
-              │                         │ │ │ │     │     │      │       │
-              │  [5V]  ─────────────────┼─┼─┼─┼─────┼─────┼──────┼───┐   │
-              │  [GND] ─────────────────┼─┼─┼─┼─────┼─────┼──────┼─┐ │   │
-              +─────────────────────────┼─┼─┼─┼─────┼─────┼──────┼─┼─┼───+
-                                        │ │ │ │     │     │      │ │ │
-                                        │ │ │ │     │     │      │ │ └───────> [VCC 5V Logic]
-                                        │ │ │ │     │     │      │ └─────────> [GND Logic]
-                                        │ │ │ │     │     │      │
-                                        │ │ │ │     │     │      ▼
-                                        │ │ │ │     │     │   +────────────────────+
-                                        │ │ │ │     │     │   │ HC-SR501 PIR       │
-                                        │ │ │ │     │     │   │ MOTION SENSOR      │
-                                        │ │ │ │     │     │   │                    │
-                                        │ │ │ │     │     │   │ [VCC] ─── VCC 5V   │
-                                        │ │ │ │     │     │   │ [OUT] ─── To D2    │
-                                        │ │ │ │     │     │   │ [GND] ─── To GND   │
-                                        │ │ │ │     │     │   +───┬────────────────+
-                                        │ │ │ │     │     │       │
-                                        │ │ │ │     │     │       ▼
-                                        │ │ │ │     │     │     [10k Ohm Resistor]
-                                        │ │ │ │     │     │     Pull-down to GND
-                                        │ │ │ │     │     │     Stiffens input node
++----------------------------------------------------------------------+
+| 2. CORE SYSTEM WIRING: ARDUINO UNO, SENSORS, ACTUATORS & COMMS      |
++----------------------------------------------------------------------+
+
+              +──────────────────────────────────────────────────────────+
+              │                    ARDUINO UNO R3                      │
+              │                                                        │
+              │  [D2]  ──(Digital Input)──────────────────────┐        │
+              │  [D5]  ──(PWM Output)───────────────────┐     │        │
+              │  [D6]  ──(PWM Output)─────────────┐     │     │        │
+              │  [D9]  ──(PWM Output)───────┐     │     │     │        │
+              │  [D10] ──(Software RX)─┐     │     │     │     │        │
+              │  [D11] ──(Software TX)─┼─┐   │     │     │     │        │
+              │  [D12] ──(Digital I/O)─┼─┼─┐ │     │     │     │        │
+              │                        │ │ │ │     │     │     │        │
+              │  [5V]  ──(from USB)────┼─┼─┼─┼─────┼─────┼─────┼────   │
+              │  [GND] ──(common)──────┼─┼─┼─┼─────┼─────┼─────┼─┐     │
+              +────────────────────────┼─┼─┼─┼─────┼─────┼─────┼─┼─┼───+
+                                        │ │ │ │     │     │     │ │ │
+                                        │ │ │ │     │     │     │ │ └────> [5V Logic Rail]
+                                        │ │ │ │     │     │     │ └──────> [GND Common]
+                                        │ │ │ │     │     │     │
+                                        │ │ │ │     │     │     ▼
+                                        │ │ │ │     │     │  [HC-SR501 PIR SENSOR]
+                                        │ │ │ │     │     │  - VCC: 5V Rail
+                                        │ │ │ │     │     │  - OUT: D2
+                                        │ │ │ │     │     │  - GND: GND Common
+                                        │ │ │ │     │     │  Note: sensitivity dial set CW,
+                                        │ │ │ │     │     │        60s warm-up after power-on
                                         │ │ │ │     │     │
                                         │ │ │ │     │     ▼
-                                        │ │ │ │     │   [SG90 MICRO SERVO (EYE MOVE)]
-                                        │ │ │ │     │   - PWM Signal   : D12
-                                        │ │ │ │     │   - Power (VCC)  : 5V Logic Rail
-                                        │ │ │ │     │   - Ground (GND) : GND Logic Rail
+                                        │ │ │ │     │  [SG90 MICRO SERVO (EYE MOVE)]
+                                        │ │ │ │     │  - Signal : D12
+                                        │ │ │ │     │  - VCC: 5V Rail
+                                        │ │ │ │     │  - GND: GND Common
                                         │ │ │ │     │
                                         │ │ │ │     ▼
                                         │ │ │ │  [MG996R SERVO (YAW HEAD PAN)]
-                                        │ │ │ │  - PWM Signal   : D5
-                                        │ │ │ │  - Power (VCC)  : 6V Motor Bus
-                                        │ │ │ │  - Ground (GND) : GND Motor Bus
+                                        │ │ │ │  - Signal : D5
+                                        │ │ │ │  - VCC: 6V Servo Rail
+                                        │ │ │ │  - GND: GND Common
                                         │ │ │ │
                                         │ │ │ ▼
                                         │ │ │ [MG996R SERVO (PITCH NECK TILT)]
-                                        │ │ │ - PWM Signal   : D6
-                                        │ │ │ - Power (VCC)  : 6V Motor Bus
-                                        │ │ │ - Ground (GND) : GND Motor Bus
+                                        │ │ │ - Signal : D6
+                                        │ │ │ - VCC: 6V Servo Rail
+                                        │ │ │ - GND: GND Common
                                         │ │ │
                                         │ │ ▼
-                                        │ │ [MG996R SERVO (JAW MOUTH OPEN)]
-                                        │ │ - PWM Signal   : D9
-                                        │ │ - Power (VCC)  : 6V Motor Bus
-                                        │ │ - Ground (GND) : GND Motor Bus
+                                        │ │ [MG996R SERVO (JAW MOVE)]
+                                        │ │ - Signal : D9
+                                        │ │ - VCC: 6V Servo Rail
+                                        │ │ - GND: GND Common
                                         │ │
-                                        │ └─────────┐
-                                        ▼           ▼
-                                   [1k Resistor] [1k Resistor] (Reduces TX/RX logic noise)
-                                        │           │
-                                        ▼           ▼
+                                        │ └────────┐
+                                        ▼          │
+                                   [Junction]  [Junction]
+                                      │            │
+                                   [680Ω R]    [1KΩ R]
+                                      │            │
+                                      ▼            │
+                                   DFPLAYER RX  ───┘ (to GND)
+                                      │
+                                      ▼
                          +─────────────────────────────────+
                          │ DFPLAYER MINI MP3 PLAYER MODULE │
                          │                                 │
-                         │ [VCC] ─────── To 5V Logic Rail  │
-                         │ [RX]  ─────── Via 1kΩ from D11  │
-                         │ [TX]  ─────── Via 1kΩ to D10    │
-                         │ [SPK+] ────── To Speaker (+)     │
-                         │ [SPK-] ────── To Speaker (-)     │
-                         │ [GND] ─────── To GND Logic Rail │
+                         │ [VCC] ─── 5V Rail               │
+                         │ [RX]  ─── via 680Ω from D11     │
+                         │          (voltage divider:      │
+                         │           680Ω junction + 1KΩ   │
+                         │           to GND, output ~3V)   │
+                         │ [TX]  ─── to D10                │
+                         │ [SPK+] ── To Speaker (+)        │
+                         │ [SPK-] ── To Speaker (-)        │
+                         │ [GND] ─── GND Common            │
                          +─────────────────────────────────+
 
-========================================================================================
+==========================================================================
 NOTES:
-1. Signal wire run lengths exceeding 0.5 meters must use shielded twisted pair.
-2. Ensure Star Ground is positioned physically near the Arduino GND pin.
-3. Decoupling capacitor (1000uF) must be physically soldered near the MG996R main hub block.
-========================================================================================
+1. Common ground: Arduino GND and battery pack GND connect at ONE point.
+2. 1000µF capacitor must be wired close to the servo power distribution point.
+3. Audio files go in "mp3" folder, FAT32 SD card, filename prefix "0001_".
+4. Always wait 60 seconds after power-on before PIR sensor will behave reliably.
+==========================================================================

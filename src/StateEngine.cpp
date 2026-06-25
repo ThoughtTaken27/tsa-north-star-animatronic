@@ -146,19 +146,28 @@ void StateEngine::updateEyeSaccades() {
 
 void StateEngine::updateJawSpeechSync() {
     uint32_t currentTime = millis();
-    
-    // Sync jaw mouth flaps in intervals mimicking human speech syllables
+    uint32_t elapsed = currentTime - stateStartTime;
+
+    // Simple jaw animation timed to the audio track's speech rhythm.
+    // Uses a repeating pattern of mouth positions at syllable-like intervals.
+    // Not true phoneme-level lip-sync (no audio waveform analysis) —
+    // animates in a speech-like cadence to match the narration's general pacing.
     if ((currentTime - lastJawMoveTime) >= 120) {
         lastJawMoveTime = currentTime;
-        
-        // Randomly pick closed, partially open, or fully open mouth coordinates
-        uint8_t jawState = random(0, 3);
-        if (jawState == 0) {
-            jawServo.setTarget(55); // Mouth fully closed
-        } else if (jawState == 1) {
-            jawServo.setTarget(70); // Semi-open mouth
-        } else {
-            jawServo.setTarget(85); // Fully open mouth
+
+        // Cycle through a speech-like pattern every ~1.2s (10 steps at 120ms)
+        uint8_t step = ((elapsed / 120) % 10);
+        switch (step) {
+            case 0: jawServo.setTarget(70); break; // semi-open
+            case 1: jawServo.setTarget(55); break; // closed
+            case 2: jawServo.setTarget(85); break; // open
+            case 3: jawServo.setTarget(60); break; // near-closed
+            case 4: jawServo.setTarget(80); break; // open
+            case 5: jawServo.setTarget(55); break; // closed
+            case 6: jawServo.setTarget(75); break; // semi-open
+            case 7: jawServo.setTarget(55); break; // closed
+            case 8: jawServo.setTarget(85); break; // open
+            case 9: jawServo.setTarget(65); break; // transition
         }
     }
 }

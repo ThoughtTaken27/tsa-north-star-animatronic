@@ -1,8 +1,6 @@
-# GitHub Publishing & Presentation Guide — "The North Star"
+# GitHub Publishing Guide — "The North Star"
 
-To transform raw code and markdown files into a highly polished, high-visibility engineering portfolio piece, you must follow a disciplined presentation protocol. 
-
-This guide outlines step-by-step instructions from initializing your local repository to optimizing the presentation for college admissions reviewers.
+Steps for publishing the repository and managing visibility.
 
 ---
 
@@ -60,8 +58,8 @@ git commit -m "Initial commit: Core firmware, schematics, and postmortem documen
 2.  Click **New** to create a new repository.
 3.  Configure the repository settings exactly as follows:
     *   **Repository Name:** `tsa-north-star-animatronic`
-    *   **Description:** `1st Place Tennessee State Championship animatronic bust utilizing isolated dual-rail power, custom hydraulic syringe actuators, and asynchronous firmware control.`
-    *   **Public/Private:** Set to **Public** (Admissions officers and reviewers must have instant access without logging in).
+    *   **Description:** `Tennessee TSA State Championship animatronic bust — battery-powered servos, hydraulic syringe actuators, and asynchronous firmware control.`
+    *   **Public/Private:** Set to **Public**.
     *   **Initialize repository with:** Leave all checkboxes (README, .gitignore, License) **unchecked** (since we have already authored these files locally).
 4.  Click **Create repository**.
 5.  Link your local repository to the new remote and push the master branch:
@@ -81,13 +79,13 @@ git push -u origin main
 
 ## Step 3: Capture & Host High-Impact Visual Assets
 
-Since admissions reviewers spend less than three minutes reviewing portfolios, a striking visual at the top of the `README.md` is essential to prove the project is functional.
+A visual at the top of the README helps demonstrate the project is functional.
 
 ### 1. Capture Guidelines
 *   **Duration:** Keep videos under 15 seconds.
-*   **Angle 1 (The Hook):** Wide shot showing the PIR sensor triggering the animatronic, followed by the head panning (Yaw), speaking (Jaw sync), and hydraulic neck lift (Pitch).
+*   **Angle 1:** Wide shot showing the PIR sensor triggering the animatronic, head panning, jaw movement, and hydraulic neck lift.
 *   **Angle 2 (The Mechanics):** Tight shot of the MG996R servo driving the custom master syringes and the blue liquid flowing smoothly through the clear PVC tubing.
-*   **Angle 3 (The Electronics):** A clean shot of the breadboard/perfboard layout showing the star ground junction and the 1000µF decoupling capacitor.
+*   **Angle 3 (The Electronics):** A clean shot of the breadboard showing the 4×AA battery pack, common ground point, and 1000µF capacitor.
 
 ### 2. Asset Hosting Protocol
 *   **Option A (Embedded GIF - Recommended):** Convert your raw video file to a high-quality, compressed `.gif` (under 5MB to ensure fast loading times) using `ffmpeg` or an online converter.
@@ -119,13 +117,13 @@ Once the repository is live, integrate it across your application touchpoints to
 *   **Activity Type:** Science/Technology
 *   **Position/Leadership:** Team Captain & Systems Integrator (TSA Animatronics Team)
 *   **Description (150 Character Limit):**
-    `Designed 1st-place state champ animatronic. Built dual-rail isolated power, custom servo-driven hydraulic syringes, & asynchronous C++ state machine.`
+    `Designed TSA state championship animatronic. Battery-powered servos, hydraulic syringe actuators, asynchronous C++ firmware.`
 *   **Web Link:** Since the Common App activities section does not allow hyperlinks, place your short GitHub URL directly at the end of the description if character limits allow, or include it in your main resume file.
 
 ### 2. Portfolio Uploads (SlideRoom / Engineering Portals)
-*   For Georgia Tech and Purdue engineering submissions, upload a PDF version of your [**Postmortem Failure Log**](./postmortem_failure_log.md) or link the repository URL directly. This serves as evidence of your ability to troubleshoot complex, real-world physical systems using first-principles analysis.
+*   For engineering program submissions, upload a PDF of the [**Postmortem Failure Log**](./postmortem_failure_log.md) or link the repository URL.
 
 ### 3. Professional LinkedIn Post (Optional)
 *   Post a 10-second video of "The North Star" performing its sequence.
 *   **Sample Copy:**
-    `Proud to share the complete technical documentation and source files for "The North Star"—our 1st-place Tennessee State Championship TSA animatronic bust. The project features isolated dual-rail power distribution to handle high transient servo loads, custom hydraulic syringe actuators, and non-blocking, asynchronous C++ firmware. Check out the full schematics and postmortem debugging log on GitHub: [Your Link]`
+    `Complete technical docs and source for "The North Star" — Tennessee TSA State Championship animatronic bust. Battery-powered servos, hydraulic syringe actuators, non-blocking C++ firmware. Full schematics and debugging log: [Link]`

@@ -1,96 +1,89 @@
 # Engineering Postmortem & Failure Log — "The North Star"
 
-Real engineering lives in the debugging logs. During the 2-month build cycle, "The North Star" animatronic underwent 87 distinct revisions to move the system from unstable prototype to a highly reliable, 1st-place state championship build. 
-
-This postmortem analyzes the four primary failure classes encountered, detailing the physical symptoms, the investigative hypotheses, diagnostic tests, and the final engineering solutions.
+This log documents the problems encountered during the build, what the actual cause was, and what fixed it. Captured from the build log maintained during the 8-week development cycle.
 
 ---
 
-## Failure Class 1: Electrical Power Stability (Brownouts & Voltage Drops)
+## 1. Hydraulic System: The First Three Days
 
-### 1. Symptom
-The system random-restarts or freezes mid-sequence, particularly when the neck tilt (hydraulic) and yaw servos accelerate simultaneously. The DFPlayer Mini sound module drops audio and clicks before the Arduino resets to the setup block.
+### Symptom
+The servo pushed the syringe plunger, but the neck barely moved. Water leaked steadily from the tubing connections onto the base. When it did move, it would rise halfway and stall.
 
-### 2. Hypothesis
-The dual MG996R servos pull high inrush current during rapid speed changes. This sudden demand drags down the common power rail voltage below the ATmega328P microcontroller's brownout detection (BOD) threshold of 4.3V, triggering a CPU reset.
+### Root Cause (Three Separate Problems)
 
-### 3. Diagnostics
-- **Equipment:** Rigol DS1102Z Digital Oscilloscope.
-- **Method:** Probe the 5V logic rail at the Arduino VCC pin during a dual-servo sweep.
-- **Results:** Observed a sharp transient voltage dip (sag) down to 3.6V lasting for 45 milliseconds during simultaneous servo acceleration. This dip verified the power rail sag as the direct cause of the ATmega328P reset state.
+**Wrong tubing size.** The first build used 1/4" inner diameter tubing instead of the required 3/16" ID. The tubing fit loosely over the syringe Luer lock tips, so water bypassed the connection on every stroke. Fixed by ordering the correct 3/16" ID vinyl tubing and rebuilding the fluid path.
 
-```text
-Volts
- 5.0V ──────┬────────────────────┬────────
-            │                    │
- 4.3V ──────┼─── BOD Threshold ──┼──────── (Reset triggers here)
-            │  \              /  │
- 3.6V ──────┼───\── Sag Dip ─/───┼──────── 
-            └─── 45ms Transient ─┘
- 0.0V ────────────────────────────────────
-                                  Time (ms)
-```
+**Air bubbles in the line.** Even after the correct tubing was installed, the neck would stall mid-lift. Air pockets in the tube compressed under pressure instead of transmitting force. Fixed by slow-cycling the servo while tapping the line to coax bubbles upward, then fully priming the system before operation.
 
-### 4. Mitigations & Solutions
-- **Rail Isolation:** Separated the power rails entirely. Placed the logic components (Arduino, PIR sensor, audio module) on an isolated 5V 2A regulator circuit. Placed the four inductive servo loads on a high-current 6V 5A power bus.
-- **Ground Ring Connection:** Linked the two ground paths at a single point (star ground configuration) on the main power terminal block to prevent ground loops.
-- **Bulk Capacitive Reservoirs:** Added a 1000µF 16V low-ESR electrolytic capacitor in parallel directly across the 6V motor power distribution rail to buffer the current spikes. Added a 470µF decoupling capacitor on the 5V logic line immediately adjacent to the DFPlayer Mini power inputs to prevent audio amplification spikes from feeding noise back to the MCU.
+**Popsicle stick linkage geometry.** The connector between the servo horn and the syringe plunger was pushing at an angle instead of straight along the plunger axis. This wasted torque fighting the geometry. Fixed by repositioning the syringe mount and adjusting the linkage attachment point so the push was a straight line.
+
+### Stress Test
+After all three fixes, the system ran 40+ cycles over two days without a single failure.
 
 ---
 
-## Failure Class 2: Electromagnetic Interference (EMI) & Sensor False Triggers
+## 2. PIR Sensor: Phantom Triggering
 
-### 1. Symptom
-The animatronic triggers its speaking sequence randomly when no human is present in the detection zone. This phantom triggering occurs primarily when the neck servos move during calibration runs.
+### Symptom
+The sequence would start randomly with nobody in front of the sensor. Sometimes it fired twice in a row during calibration.
 
-### 2. Hypothesis
-The HC-SR501 PIR sensor has high input impedance. Electromagnetic noise radiated from the DC motor brushes inside the MG996R servos couples inductively into the unshielded 1.5-meter PIR signal line, generating false HIGH logic levels at Arduino digital pin D2.
+### Root Cause (Two Issues)
 
-### 3. Diagnostics
-- **Method:** Covered the PIR sensor lens with black electrical tape to block infrared changes. Run the neck servos continuously. Monitor the state of pin D2 via serial stream.
-- **Results:** Observed digital pin D2 flickering between `0` and `1` in sync with servo PWM switching, proving EMI was coupling into the signal path.
+**Sensitivity potentiometer set too low.** The HC-SR501 has a small dial on the board. It was turned too far counterclockwise, making the sensor barely register heat signatures and occasionally misread electrical noise as a trigger. Turning the dial clockwise toward the max sensitivity mark resolved the phantom triggering almost immediately.
 
-### 4. Mitigations & Solutions
-- **Shielded Cabling:** Replaced standard hookup wire with shielded twisted-pair (STP) cable for the PIR sensor connection, grounding the shield drain wire solely at the Arduino chassis ground.
-- **Input Node Stiffening:** Wired a physical 10kΩ metal-film pull-down resistor between digital pin D2 and ground. This reduced the node impedance, draining coupled low-energy induced charges to ground before they could cross the 3.0V logic HIGH threshold.
-- **Software Debounce & Window Filtering:** Rewrote the sensor polling code to implement a temporal logic filter. The software now requires the PIR state to remain high for 150 consecutive milliseconds before confirming a true human presence event.
+**60-second warm-up ignored.** The HC-SR501 behaves erratically during its first 60 seconds after power-on. We kept powering up and immediately testing. Once we made it standard practice to wait 60 seconds after power-on before any interaction, the behavior became completely reliable.
+
+### Competition Protocol
+Set at check-in: power on the system, start the 60-second timer, then proceed with setup while the sensor stabilizes.
 
 ---
 
-## Failure Class 3: Mechanical Friction & Skin Tension Binding
+## 3. DFPlayer Mini: No Audio
 
-### 1. Symptom
-The neck pitch movement is jerky and sluggish. The servo hums loudly (groaning under continuous stall-current load of ~2.2A) and runs hot to the touch. The motion of the neck is asymmetrical between rising and falling phases.
+### Symptom
+Code uploaded, connections checked, nothing played. The module appeared dead.
 
-### 2. Hypothesis
-The heavy silicone skin of the bust is stretched tightly over the mechanical frame. The latex neck joints exert variable elastic tension during movement, exceeding the MG996R servo’s maximum rated torque of 11 kg/cm.
+### Root Cause (Two Problems)
 
-### 3. Diagnostics
-- **Method:** Disconnect the silicone skin entirely and execute the motion sequence. Reconnect the skin and measure current draw on the 6V motor rail.
-- **Results:** 
-  - Without skin: Servo current draw = 220mA (normal operational load); movement is fluid.
-  - With skin: Servo current draw = 1.9A to 2.3A (continuous stall condition); movement is severely restricted.
+**Voltage divider built wrong.** The DFPlayer Mini RX pin expects 3.3V logic, but the Arduino outputs 5V. The fix requires a voltage divider: a 680Ω resistor from Arduino TX to the junction, then a 1KΩ resistor from the junction to ground, with the DFPlayer RX connected at the junction (outputs ~2.98V). The divider was initially wired with incorrect resistor values. Rebuilding it with 680Ω + 1KΩ fixed the communication immediately.
 
-### 4. Mitigations & Solutions
-- **Skin Tension Relief:** Slit the internal back layer of the silicone throat piece to introduce mechanical relief pockets. This modification allows the skin to expand during neck tilt rather than stretching.
-- **Mechanical Lubrication:** Coated the structural aluminum neck U-joint in dry-film PTFE (teflon) spray lubricant. Unlike grease, dry teflon does not attract dust or degrade the silicone skin material.
-- **Software Velocity Ramping:** Replaced instant angular steps (`servo.write(angle)`) with an active speed ramping routine. The firmware now increments the angle position incrementally every 15 milliseconds using a cosine-shaped acceleration curve, matching mechanical inertia and reducing start-up torque demands.
+**Wrong file naming convention.** The DFPlayer requires audio files to be stored in a folder called `mp3` on the root of a FAT32-formatted SD card, with filenames starting with a four-digit number (e.g., `0001_harriet_narration.mp3`). The file was initially named without leading zeros.
+
+### Fix Summary
+- Rebuilt voltage divider: 680Ω (TX→junction) + 1KΩ (junction→GND)
+- Renamed audio file to `0001_` prefix
+- Verified card was FAT32 (Patriot 16GB)
 
 ---
 
-## Failure Class 4: Hydraulic Pressure Decay & Seal Degradation
+## 4. Power System: Mid-Sequence Restarts
 
-### 1. Symptom
-Over 48 hours of display testing, the neck tilt joint loses height (head droops). The linear extension under load diminishes, and blue liquid deposits appear around the master syringe shafts.
+### Symptom
+During full-sequence testing, the Arduino would reset mid-way — usually when the head servo and hydraulic servo fired simultaneously. Audio cut out, servos twitched, sequence restarted from the beginning.
 
-### 2. Hypothesis
-The standard medical-grade rubber plunger seals degrade when exposed to continuous pressure and color additives. Fluid leaks past the single seal line, causing pressure drop and hydraulic volume loss.
+### Root Cause
+The servos were powered from the Arduino's 5V pin, which can source roughly 500mA. Multiple MG996R servos drawing current simultaneously pulled the rail voltage below the ATmega328P's brownout threshold, causing a reset.
 
-### 3. Diagnostics
-- **Method:** Apply a static mechanical load to the master syringe plunger and inspect the rear seal boundary over a 12-hour window.
-- **Results:** Observed a steady fluid leakage rate of ~0.5ml per hour past the primary rubber seal, accompanied by a 4mm drop in slave syringe linear extension.
+### Fixes Applied
+- Moved all servo power off the Arduino 5V pin and onto a dedicated 6V rail from a 4×AA battery pack (1.5V × 4 = 6V).
+- Added a 1000µF 25V electrolytic capacitor across the servo power rail to act as a local charge reservoir during sudden current demand.
+- Established a common ground between Arduino GND and the battery pack GND.
 
-### 4. Mitigations & Solutions
-- **Dual O-Ring Plunger Modification:** Removed the default single-contact rubber plungers. Machined two grooved slots into custom-turned Delrin plunger heads. Fitted them with dual nitrile O-rings lubricated with high-viscosity silicon grease to establish a pressure-tight dynamic seal.
-- **Fluid Reformation:** Replaced standard tap water with a 20/80 mix of industrial propylene-glycol and distilled water. Glycol preserves seal elasticity, prevents internal oxidation of aluminum fittings, and acts as a mild lubricant for the tubing walls.
-- **Software Zeroing Check:** Added a "re-calibration" phase in the state machine. Every time the system returns to its idle state, the pitch servo drives the master plunger slightly beyond the home baseline for 200ms to rebuild pressure and purge tiny air gaps back to the master reservoir.
+### Stress Test
+After both changes, the full sequence ran 30 consecutive times with zero resets.
+
+---
+
+## Summary of All Fixes
+
+| Problem | Actual Cause | Fix |
+|---------|-------------|-----|
+| Hydraulic leak | 1/4" tubing instead of 3/16" ID | Replaced with correct tubing |
+| Hydraulic stall | Air bubbles in fluid line | Bled system by slow-cycling + tapping |
+| Hydraulic inefficiency | Popsicle stick linkage at wrong angle | Realigned for straight-line push |
+| Phantom PIR triggers | Sensitivity dial too low | Turned clockwise toward max |
+| Phantom PIR triggers | No warm-up wait | Added 60s power-on delay |
+| DFPlayer silent | Voltage divider resistor values wrong | Rebuilt with 680Ω + 1KΩ |
+| DFPlayer silent | Missing leading zeros in filename | Renamed to 0001_ prefix |
+| Arduino resetting | Servos on Arduino 5V pin (overcurrent) | Moved to 4×AA battery pack 6V rail |
+| Arduino resetting | No transient buffer on servo rail | Added 1000µF capacitor |

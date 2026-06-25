@@ -1,125 +1,111 @@
 # "The North Star" — Harriet Tubman Animatronic Bust
 
-[![Shield: 1st Place](https://img.shields.io/badge/Competition-1st%20Place%20State%20Championship-gold.svg?style=flat-square)](https://github.com/Parthkkk/tsa-north-star-animatronic)
+[![Badge: Competition](https://img.shields.io/badge/Competition-TSA%20Tennessee%20State%20Championship-gold.svg?style=flat-square)](https://github.com/Parthkkk/tsa-north-star-animatronic)
 [![Platform: Arduino](https://img.shields.io/badge/Platform-Arduino%20Uno-blue.svg?style=flat-square)](https://www.arduino.cc/)
 [![Language: C++](https://img.shields.io/badge/Language-C%2B%2B%20%2F%20Embedded-brightgreen.svg?style=flat-square)](https://isocpp.org/)
 
-"The North Star" is a fully custom, interactive animatronic Harriet Tubman bust built over a intensive two-month design cycle. The system won **1st Place at the Tennessee TSA State Championship (2026)**.
-
-The project demonstrates systems-level embedded engineering, real-time asynchronous firmware development, fluid dynamics (using a custom closed-loop hydraulic cylinder system), and precise mechanical motion syncing.
+"The North Star" is an interactive animatronic Harriet Tubman bust built for the Tennessee TSA State Championship (2026). The system uses an Arduino Uno, servo-driven syringe hydraulics for neck tilt, and a non-blocking finite state machine.
 
 ---
 
-## Technical Overview & Core Stats
+## Technical Overview
 
 | Metric | Specification |
 | :--- | :--- |
-| **Primary Outcome** | **1st Place, Tennessee State Championship (May 2026)** |
-| **System Integrator & Role** | Parth Khavate — Lead Systems Architect, Team Captain |
-| **Total Engineering Effort** | ~200 hours (Design, Assembly, Calibration, Debugging) |
+| **Competition** | TSA Tennessee State Championship (May 2026) |
 | **Microcontroller** | ATmega328P (Arduino Uno R3) |
-| **Actuators** | 3x TowerPro MG996R High-Torque Servos, 1x SG90 Micro Servo |
-| **Transmission Type** | Closed-Loop Hydraulic Syringe System (Neck Tilt) + Direct Mechanical Linkage |
-| **Audio Interface** | DFPlayer Mini with 8-Ohm 3W Speaker via custom SoftwareSerial |
-| **Sensor Interface** | HC-SR501 Passive Infrared (PIR) Sensor with temporal software debouncing |
-| **Power Infrastructure** | Isolated Dual Power Supplies (5V Logic, 6V Motor Bus) with Star Ground |
+| **Actuators** | 3x TowerPro MG996R, 1x SG90 Micro Servo |
+| **Neck Tilt** | Master-slave syringe hydraulics (60ml syringes, 3/16" PVC tubing) |
+| **Audio** | DFPlayer Mini + 8Ω 3W speaker (voltage divider on RX line) |
+| **Sensor** | HC-SR501 PIR (sensitivity dial adjusted, 60s warm-up required) |
+| **Servo Power** | 4×AA battery pack (6V) with 1000µF capacitor |
+| **Arduino Power** | USB (laptop / phone charger / USB power bank) |
 
 ---
 
-## 1. System Architecture Diagram
-
-Admissions readers can inspect how subsystems connect electrically and mechanically below:
+## System Architecture
 
 ```text
-               +───────────────────────────────────+
-               │        AC/DC WALL ADAPTER         │
-               +───┬───────────────────────────┬───+
-                   │ (5V Logic Power)          │ (6V Motor Power)
-                   ▼                           ▼
-       +───────────────────────+       +───────────────────────+
-       │  5V LOGIC POWER BUS   │       │   6V MOTOR POWER BUS  │
-       +─────┬───────────┬─────+       +───────────┬───────────+
-             │           │                         │
-             │           │ (Power Ring)            ▼
-             ▼           │             +───────────────────────+
-     +─────────────+     │             │ 1000uF Bulk Capacitor │
-     │ ARDUINO UNO │     │             +───────────┬───────────+
-     │  (ATmega)   │     │                         │ (Buffered 6V)
-     +───┬───┬───┬─+     │                         ├───────────────────────┐
-         │   │   │       │                         │                       │
-         │   │   │       ▼                         ▼                       ▼
-         │   │   │   +─────────────+       +───────────────+       +───────────────+
-         │   │   └──>│ PIR SENSORS │       │ MG996R Servos │       │ SG90 Servo    │
-         │   │       +─────────────+       │ (Yaw/Pitch/Mouth)     │ (Eye Shifter) │
-         │   │       (Input Trigger)       +───────────────+       +───────────────+
-         │   │                                     ▲                       ▲
-         │   └───────────────(PWM Control Pins)────┼───────────────────────┘
-         │
-         ▼ (SoftwareSerial TX/RX via 1kΩ)
-     +─────────────+
-     │  DFPLAYER   ├───────────────> [ SPK ] ────> 8Ω 3W Passive Speaker
-     │    MINI     │
-     +─────────────+
+  +────────────────────+          +──────────────────────────+
+  │ ARDUINO UNO (USB)  │          │  4×AA BATTERY PACK (6V)  │
+  │ 5V from USB port   │          │  (servo power only)      │
+  +────┬───┬───┬───┬───+          +────────────┬─────────────+
+       │   │   │   │                            │
+       │   │   │   │    (PWM pins)              │
+       │   │   │   ├────────────────────────────┼────┐
+       │   │   │   │                            │    │
+       │   │   │   ▼                   +────────┴──┐ │
+       │   │   │   [MG996R Servos] ───>│ Common GND ├─┘
+       │   │   │   (Yaw/Pitch/Jaw)     +───────────+
+       │   │   │
+       │   │   └────(D12)──> SG90 Eye Servo
+       │   │
+       │   └────(Voltage Divider 680Ω+1KΩ)──> DFPlayer RX
+       │                                        (3.3V logic)
+       ▼
+   +──────────+
+   │ PIR      │
+   │ HC-SR501 │ (D2, sensitivity dial set CW, 60s warm-up)
+   +──────────+
 ```
 
 ---
 
-## 2. Technical Breakthroughs
+## Design Details
 
-### The Asynchronous Finite State Machine (FSM)
-To achieve natural coordination without mechanical stuttering, the firmware avoids blocking `delay()` statements entirely. Every sub-assembly (saccadic eye-shifting, syllable-synced jaw flapping, head panning, and smooth hydraulic neck tilting) runs concurrently using software millisecond timers (`millis()`).
+**Non-Blocking State Machine.** No `delay()` calls. Servo updates, PIR polling, and jaw animation all run from `millis()` timers in the main loop. Prevents stuttering when multiple subsystems update concurrently.
 
-### The "Hydraulic Hack"
-Standard physical linear actuators are loud, expensive, and jerk under initial load. To coordinate smooth neck tilt, the system translates the rotational movement of a high-torque MG996R servo into linear motion using dual 60ml Luer Lock medical-grade master syringes. Fluid travels through reinforced clear PVC lines to matching slave syringes linked to the neck pivot, achieving silent, fluid lift movement.
+**Syringe Hydraulics.** A MG996R servo pushes a 60ml master syringe; fluid travels through 3/16" PVC tubing to a slave syringe that lifts the neck. The linkage uses a popsicle stick connecting the servo horn to the plunger, aligned for straight-line push. Quieter than a direct gear drive.
 
-### Star-Ground & Transient Buffering
-Simultaneous servo acceleration pulls peak transient current spikes exceeding 4A. An isolated dual power-supply bus separates the sensitive logic elements (such as the ATmega328P and DFPlayer audio lines) from the heavy inductive loads of the motors. A 1000µF low-ESR electrolytic capacitor acts as a reservoir to buffer transient sag on the motor rail, eliminating CPU resets.
+**Power Separation.** The Arduino runs from USB (5V). The three MG996R servos run from a 4×AA battery pack (~6V). A 1000µF capacitor across the servo rail buffers current spikes. Arduino and battery pack share a common ground.
 
----
+**DFPlayer Integration.** The DFPlayer Mini's RX line expects 3.3V logic. A voltage divider (680Ω from Arduino TX to junction, 1KΩ from junction to ground, DFPlayer RX at junction) drops the 5V signal to ~2.98V. Audio files must be named `0001_...` inside a folder called `mp3` on a FAT32 SD card.
 
-## 3. Directory Structure & Quick Navigation
-
-The assets inside this repository are organized as follows:
-
-*   [**`tsa-north-star-animatronic.ino`**](./tsa-north-star-animatronic.ino) — Main Arduino sketch, entry point, system setup, and non-blocking loop scheduler.
-*   [**`/src`**](./src/) — Fully modular C++ code classes.
-    *   [`StateEngine.h`](./src/StateEngine.h) / [`.cpp`](./src/StateEngine.cpp): The Finite State Machine coordinator (Idle -> Speaking -> Hydraulic Tilt -> Return to Home).
-    *   [`Actuators.h`](./src/Actuators.h) / [`.cpp`](./src/Actuators.cpp): Custom servo wrapping class implementing velocity speed-ramping profiles.
-    *   [`Sensors.h`](./src/Sensors.h) / [`.cpp`](./src/Sensors.cpp): Temporal filter class debouncing high-impedance PIR input lines.
-    *   [`AudioController.h`](./src/AudioController.h) / [`.cpp`](./src/AudioController.cpp): Direct serial communicator managing MP3 playback command packets.
-*   [**`/hardware`**](./hardware/) — Wiring diagrams, mechanical assemblies, fluid power physics, and budgets.
-    *   [`bom.md`](./hardware/bom.md): Tabulated Bill of Materials, Arduino I/O pin mapping, and power budget profiles.
-    *   [`mechanical_assembly.md`](./hardware/mechanical_assembly.md): Structural details, torso MDF frame, and neck universal joint rigging.
-    *   [`fluid_power_system.md`](./hardware/fluid_power_system.md): Closed-loop master-slave syringe hydraulic cylinder calculations and O-ring seals.
-    *   [`schematics/system_schematic_ascii.txt`](./hardware/schematics/system_schematic_ascii.txt): Detailed ASCII electrical schematic.
-*   [**`/docs`**](./docs/) — Historical contexts, competition rubrics, and systematic failure logs.
-    *   [`postmortem_failure_log.md`](./docs/postmortem_failure_log.md): Analysis of the 87 micro-fixes, categorized into four primary electrical, mechanical, electromagnetic, and fluidic engineering failures.
-    *   [`voltage_drop_analysis.md`](./docs/voltage_drop_analysis.md): Deep-dive electrical report on transient voltage sags and capacitive decoupling.
-    *   [`competition_math.md`](./docs/competition_math.md): Strategic optimization analysis of the high-weight scoring rubric.
-    *   [`historical_context.md`](./docs/historical_context.md): Deep-dive on the historical background of Harriet Tubman and "The North Star" theme.
-    *   [`engineering_notebook.md`](./docs/engineering_notebook.md): Timeline diary, team structure, and daily development log.
-    *   [`assembly_guide.md`](./docs/assembly_guide.md): Quick-start physical calibration limits and hardware safe boundary rules.
+**PIR Sensor.** The HC-SR501 sensitivity potentiometer is turned clockwise (higher sensitivity). A mandatory 60-second warm-up period after power-on prevents erratic triggering during setup.
 
 ---
 
-## 4. Reconstructing the 87 Fixes
+## Directory Structure
 
-Real engineering is demonstrated by the ability to systematically troubleshoot physical systems. Our full [Postmortem Failure Log](./docs/postmortem_failure_log.md) chronicles how we solved the four primary challenges during assembly:
-
-1.  **Logic Resets (Brownouts):** Solved by building a split-rail logic/motor power supply bus and wiring a 1000µF decoupling capacitor near the servo hub.
-2.  **EMI Noise (Sensor False-Triggers):** Solved by replacing standard signal hookups with shielded twisted-pair cables and wiring a physical 10kΩ pull-down resistor to stiffen the input node.
-3.  **Mechanical Binding (Silicone Friction):** Solved by slitting back pockets into the silicone throat skin, spraying dry-film PTFE (Teflon) on joint pivots, and writing software velocity ramp profiles in the firmware.
-4.  **Hydraulic Droop (Pressure Loss):** Solved by machining Delrin plunger heads with dual O-rings and shifting to a distilled water-propylene glycol mixture.
+*   [`tsa-north-star-animatronic.ino`](./tsa-north-star-animatronic.ino) — Main sketch
+*   [`/src`](./src/) — Modular C++ classes
+    *   `StateEngine`: FSM coordinator
+    *   `Actuators`: Servo wrapper with velocity ramping
+    *   `Sensors`: PIR temporal debounce
+    *   `AudioController`: DFPlayer serial protocol
+*   [`/hardware`](./hardware/) — BOM, schematics, mechanical guide
+    *   [`bom.md`](./hardware/bom.md): Parts list, pin map, power budget
+    *   [`schematics/system_schematic_ascii.txt`](./hardware/schematics/system_schematic_ascii.txt): Wiring schematic
+*   [`/docs`](./docs/) — Build log, failure analysis, competition notes
+    *   [`postmortem_failure_log.md`](./docs/postmortem_failure_log.md): Every problem encountered and what fixed it
+    *   [`voltage_drop_analysis.md`](./docs/voltage_drop_analysis.md): Brownout analysis and capacitor sizing
+    *   [`competition_math.md`](./docs/competition_math.md): TSA rubric notes and design trade-offs
 
 ---
 
-## 5. Build & Installation
+## Troubleshooting Summary
 
-To flash the code and set up the diagnostic serial telemetry:
+The [Postmortem Failure Log](./docs/postmortem_failure_log.md) covers the nine problems that came up during the build:
 
-1.  Open [**`tsa-north-star-animatronic.ino`**](./tsa-north-star-animatronic.ino) in the Arduino IDE (or compile using the Arduino CLI).
-2.  Install the standard `Servo` library.
-3.  Connect the Arduino Uno R3 via USB.
-4.  Select `Arduino Uno` under **Tools > Board** and choose your COM/Serial Port.
-5.  Compile and Upload.
-6.  Open the Serial Monitor and configure the baud rate to **`115200`** to monitor real-time FSM state change logging.
+| Problem | Root Cause | Fix |
+|---------|-----------|-----|
+| Hydraulic leak | Wrong tubing (1/4" instead of 3/16") | Correct tubing |
+| Joint stalls mid-lift | Air bubbles in line | Slow-cycle + tap to bleed |
+| Sluggish tilt | Linkage angle off | Realigned for straight push |
+| Random PIR triggers | Sensitivity too low | Turned dial CW |
+| Erratic PIR at startup | No warm-up | 60s delay after power-on |
+| DFPlayer silent | Wrong voltage divider resistors | 680Ω + 1KΩ rebuild |
+| DFPlayer silent | Bad filename | 0001_ prefix, FAT32 card |
+| Arduino resets mid-run | Servos on 5V pin | Moved to 4×AA 6V rail |
+| Arduino resets mid-run | No transient buffer | 1000µF capacitor on servo rail |
+
+---
+
+## Build & Install
+
+1. Open [`tsa-north-star-animatronic.ino`](./tsa-north-star-animatronic.ino) in Arduino IDE.
+2. Install the `Servo` library (bundled with Arduino IDE).
+3. Connect Arduino Uno via USB. Select **Tools > Board > Arduino Uno**, choose the port.
+4. Compile and upload.
+5. Open Serial Monitor at **115200 baud** to observe FSM state transitions.
+6. **PIR warm-up:** wait 60 seconds after power-on before testing.

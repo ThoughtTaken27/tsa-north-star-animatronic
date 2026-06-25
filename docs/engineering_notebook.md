@@ -34,13 +34,13 @@ The project was executed under a strict division of labor across a 3-person team
 - **Deliverable:** Verified PIR sensor detection limits and validated basic serial command packet transmission.
 
 ### Weeks 5–6: Frame Construction & Actuator Rigging
-- **Action:** Assembled the laser-cut MDF torso cage. Mounted the aluminum dual-axis neck U-joint. Fitted the internal 3D-printed skull cap with eye-shifter and jaw linkages.
+- **Action:** Assembled the laser-cut MDF torso cage. Mounted the neck U-joint. Fitted the internal frame with eye-shifter and jaw linkages.
 - **Deliverable:** Initialized physical servo alignments and calibrated software boundaries to prevent mechanical collisions.
 
 ### Weeks 7–8: The Hydraulic System & Debugging Phase
-- **Action:** Constructed the closed-loop hydraulic link using clear PVC tubing and 60ml Luer Lock master-slave syringes. Experienced immediate fluid seal blowouts and system brownouts.
-- **Deliverable:** Solved the brownout reset loops by splitting the power rails and soldering a 1000µF decoupling capacitor. Solved hydraulic pressure loss by machining Delrin plunger heads with double nitrile O-rings.
+- **Action:** Constructed the hydraulic link using PVC tubing and 60ml syringes. Fought three problems: wrong tubing size (1/4" instead of 3/16" ID), air bubbles in the line, and popsicle stick linkage at the wrong angle. Brownouts started appearing when servos fired simultaneously during testing.
+- **Deliverable:** Fixed hydraulics by switching to correct 3/16" tubing, bleeding air, and realigning linkage. Fixed brownouts by moving servo power to a dedicated 4×AA battery pack and adding a 1000µF capacitor. Solved DFPlayer audio by rebuilding the voltage divider (680Ω + 1KΩ) and correcting the file naming convention.
 
 ### Weeks 9–10: Presentation Prep & Calibration
-- **Action:** Mounted the silicone skin painted in historical likeness. Applied dry PTFE lubricant on structural neck joints to reduce skin friction. Polished the technical documentation.
+- **Action:** Mounted the silicone skin. Applied PTFE lubricant on structural neck joints to reduce friction. Polished the technical documentation.
 - **Deliverable:** Executed continuous stress-testing. Prepared oral presentations for the judges' evaluation panel. Passed with zero mechanical or electrical failures during competition runs.

@@ -1,48 +1,21 @@
-# Competition Strategy & Math Analysis — "The North Star"
+# Competition Notes — "The North Star"
 
-Winning a technical competition requires optimization of the scoring rubric. This document details the mathematical breakdown of the Technology Student Association (TSA) Animatronics rubric and how we engineered our system architecture to maximize points.
-
----
-
-## 1. Rubric Distribution Analysis
-
-The competition score is weighted across three main performance pools:
-
-$$\text{Total Score} = \text{Functionality} \, (70\%) + \text{Engineering Documentation} \, (15\%) + \text{Presentation} \, (15\%)$$
-
-| Evaluation Pool | Weight | Focus Areas | Our Engineering Response |
-| :--- | :---: | :--- | :--- |
-| **Functionality** | **70%** | Mechanical fluid movement, sequence timing, lip-sync accuracy, trigger reliability, physical durability | Asynchronous state machine (FSM), isolated dual power bus, robust double O-ring medical syringe hydraulics |
-| **Documentation** | **15%** | Design drawings, wiring schematics, code logic, bill of materials, safety logs | Comprehensive 3-part technical portfolio (BOM, assembly schematics, failure logs) |
-| **Presentation** | **15%** | Creative delivery, historical coherence, team coordination, answering judges' questions | Rigorous technical defense demonstrating first-principles troubleshooting (the 87 fixes) |
+Observations on how the design aligned with TSA Animatronics rubric categories. Verify exact rubric weights against your chapter's current scoring guide.
 
 ---
 
-## 2. Optimizing the 70% Functionality Bottleneck
+## Design Rationale
 
-Because 70% of the grade depends on physical performance during judges' evaluation runs, we treated system reliability as our primary engineering target.
+Four degrees of freedom (Neck Yaw, Neck Pitch, Mouth, Eyes) instead of more. Kept power manageable on batteries and reduced mechanical binding points.
 
-### The MTBF (Mean Time Between Failures) Strategy
-Hobbyist teams focus on "feature creep"—adding secondary servos (e.g., ear wiggles, multi-joint hand grips). However, in embedded systems, every extra joint introduces:
-- Linear increase in current draw (voltage sag risk).
-- Quadratic increase in mechanical collision opportunities.
-- Linear increase in wiring complexity (EMI noise risk).
-
-**The Decision:** We restricted the system to four high-quality, high-reliability degrees of freedom (Neck Yaw, Neck Pitch, Mouth, Eyes). This simplified current pathways, stabilized our power rails, and allowed us to concentrate on achieving perfect lip-syncing and fluid hydraulic movement.
-
-### Lip-Sync Coordination Calculations
-To simulate speech, the mouth servo must respond to narrative audio track files instantly. 
-- The DFPlayer Mini reads MP3 track files from an SD card.
-- We mapped the voice track duration and calculated syllable pacing.
-- The jaw control loop runs on a fast 120-millisecond update window:
-  $$\Delta t_{\text{update}} = 120\,\text{ms}$$
-- This sample rate is fast enough to match standard speech patterns without overloading the ATmega328P processor or stalling the MG996R servo gears.
+The jaw follows a repeating position sequence on a 120ms timer — not true phoneme-level lip-sync (no audio waveform analysis).
 
 ---
 
-## 3. Optimizing the 15% Documentation Pool
+## Competition Day
 
-To secure maximum documentation points, we formatted the engineering files to align with professional industry standards rather than basic high-school notebooks. 
+Presented at TSA Tennessee State Championship, Chattanooga Convention Center, May 2026.
 
-*   **Explicit Electrical Schematics:** Rather than simple Fritzing screenshots, we provided structured ASCII wire mapping and a complete power budget calculation.
-*   **The Postmortem Failure Log:** By chronicling our 87 revisions and categorizing them into four engineering failure classes, we proved systematic design iteration. This detail shifted our documentation score from "proficient" to "exemplary."
+**Setup.** The 5-minute setup clock started. The painted black backdrop (foam board with hand-dotted stars and a North Star LED) was still in the hotel room two minutes away. One team member was sent to retrieve it while the other two continued setup: Arduino powered on (starting the PIR's 60-second warm-up immediately), base positioned, bust assembled. The backdrop arrived with roughly 90 seconds to spare.
+
+**Judge Feedback.** The judge examined the internal wiring. She noted the entry was the only one at the event that was entirely self-contained — no laptop tethering, no external power source, nothing outside the exhibit itself. She commented specifically on the quality of the circuitry. She then gave advice on what to refine for a potential nationals appearance — indicating qualification before the results were officially posted.

@@ -30,6 +30,6 @@ The animatronic is titled "The North Star" after the celestial body (Polaris) th
 ## 3. Historical Accuracy vs. Mechanical Constraint
 
 Recreating a historical figure inside a mechanical framework introduces severe material boundaries:
-1.  **Silicone Flesh Tone & Texturing:** Representing age and environmental weathering on soft poured platinum silicone without creating excessive skin thickness that would bind the high-torque neck servos.
-2.  **Structural Bone Proportions:** Scaling the internal 3D-printed skull cap to match historical photo plates while maintaining enough volumetric space inside for the dual SG90 eye-shifter rails and the jaw hinge linkage.
+1.  **Silicone Flesh Tone & Texturing:** Representing age and environmental weathering on the silicone skin without creating excessive thickness that would bind the neck servos.
+2.  **Structural Bone Proportions:** Scaling the internal frame to match historical proportions while maintaining enough space for the eye-shifter rails and jaw hinge linkage.
 3.  **Period Clothing:** Sourcing and tailoring 19th-century cotton-wool textiles that drape naturally over the MDF torso framework without introducing static drag on the lower neck-pan servo.
