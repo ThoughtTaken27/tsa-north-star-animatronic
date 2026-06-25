@@ -68,7 +68,7 @@ git commit -m "Initial commit: Core firmware, schematics, and postmortem documen
 
 ```bash
 # Add the remote origin link (replace with your GitHub username)
-git remote add origin https://github.com/parthkhavate/tsa-north-star-animatronic.git
+git remote add origin https://github.com/Parthkkk/tsa-north-star-animatronic.git
 
 # Set branch name to main
 git branch -M main

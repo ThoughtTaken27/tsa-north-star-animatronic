@@ -1,6 +1,6 @@
 # "The North Star" — Harriet Tubman Animatronic Bust
 
-[![Shield: 1st Place](https://img.shields.io/badge/Competition-1st%20Place%20State%20Championship-gold.svg?style=flat-square)](https://github.com/parthkhavate/tsa-north-star-animatronic)
+[![Shield: 1st Place](https://img.shields.io/badge/Competition-1st%20Place%20State%20Championship-gold.svg?style=flat-square)](https://github.com/Parthkkk/tsa-north-star-animatronic)
 [![Platform: Arduino](https://img.shields.io/badge/Platform-Arduino%20Uno-blue.svg?style=flat-square)](https://www.arduino.cc/)
 [![Language: C++](https://img.shields.io/badge/Language-C%2B%2B%20%2F%20Embedded-brightgreen.svg?style=flat-square)](https://isocpp.org/)
 
