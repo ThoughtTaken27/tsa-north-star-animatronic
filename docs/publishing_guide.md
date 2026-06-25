@@ -123,7 +123,7 @@ Once the repository is live, integrate it across your application touchpoints to
 *   **Web Link:** Since the Common App activities section does not allow hyperlinks, place your short GitHub URL directly at the end of the description if character limits allow, or include it in your main resume file.
 
 ### 2. Portfolio Uploads (SlideRoom / Engineering Portals)
-*   For Georgia Tech and Purdue engineering submissions, upload a PDF version of your [**Postmortem Failure Log**](./docs/postmortem_failure_log.md) or link the repository URL directly. This serves as evidence of your ability to troubleshoot complex, real-world physical systems using first-principles analysis.
+*   For Georgia Tech and Purdue engineering submissions, upload a PDF version of your [**Postmortem Failure Log**](./postmortem_failure_log.md) or link the repository URL directly. This serves as evidence of your ability to troubleshoot complex, real-world physical systems using first-principles analysis.
 
 ### 3. Professional LinkedIn Post (Optional)
 *   Post a 10-second video of "The North Star" performing its sequence.
