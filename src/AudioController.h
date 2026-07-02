@@ -18,6 +18,7 @@ public:
     void begin();
     void setVolume(uint8_t volume); // Volume range 0 to 30
     void playTrack(uint16_t folderNumber, uint16_t trackNumber);
+    void playMp3Track(uint16_t trackNumber);
     void stop();
     void reset();
 };

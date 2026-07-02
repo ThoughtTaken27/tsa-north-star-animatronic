@@ -1,121 +1,124 @@
-==========================================================================
-ELECTRICAL WIRING SCHEMATIC — "THE NORTH STAR" HARRIET TUBMAN ANIMATRONIC
-==========================================================================
+================================================================================
+SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
+================================================================================
 
-+----------------------------------------------------------------------+
-| 1. POWER SYSTEM: SEPARATE SOURCES WITH COMMON GROUND                 |
-+----------------------------------------------------------------------+
+1. POWER OVERVIEW
+--------------------------------------------------------------------------------
 
-  ARDUINO POWER (5V via USB)
-  +─────────────────+       [VCC 5V] (from USB) ==> Arduino 5V rail
-  │ LAPTOP / USB    │       [GND 0V]  (from USB) ==> Arduino GND
-  │ POWER BANK      │
-  +─────────────────+
+  9V BATTERY + BARREL JACK
+        |
+        v
+  +-------------------+
+  |   ARDUINO UNO     |
+  |  onboard 5V rail  |
+  +---------+---------+
+            |
+            +---- 5V logic rail: PIR, DFPlayer, LEDs
 
-  SERVO POWER (6V via Battery Pack)
-  +─────────────────+
-  │  4×AA BATTERY   │  (1.5V × 4 = 6V)
-  │  PACK (6V)      ├───────┐
-  +─────────────────+       │
-                            │
-                            ▼
-                      +-----------+
-                      │ 1000uF    │ 25V Electrolytic Capacitor
-                      │ CAPACITOR │ (across + and - rails)
-                      +-----------+
-                        │      │
-                     (6V+)  (GND)
-                        │      │
-                        ▼      ▼
-                     =============  Servo Power Rail
-                      6V+    GND
 
-  COMMON GROUND POINT
-  Arduino GND ────────♦──────── Battery Pack GND
-                       (one connection point)
+  4xAA BATTERY PACK WITH SWITCH  (6V nominal)
+        |
+        v
+  +-------------------+
+  |  SERVO POWER RAIL |
+  +---------+---------+
+            |
+            +---- MG996R head servo
+            +---- MG996R hydraulic servo
+            +---- SG90 lantern arm servo
 
-+----------------------------------------------------------------------+
-| 2. CORE SYSTEM WIRING: ARDUINO UNO, SENSORS, ACTUATORS & COMMS      |
-+----------------------------------------------------------------------+
 
-              +──────────────────────────────────────────────────────────+
-              │                    ARDUINO UNO R3                      │
-              │                                                        │
-              │  [D2]  ──(Digital Input)──────────────────────┐        │
-              │  [D5]  ──(PWM Output)───────────────────┐     │        │
-              │  [D6]  ──(PWM Output)─────────────┐     │     │        │
-              │  [D9]  ──(PWM Output)───────┐     │     │     │        │
-              │  [D10] ──(Software RX)─┐     │     │     │     │        │
-              │  [D11] ──(Software TX)─┼─┐   │     │     │     │        │
-              │  [D12] ──(Digital I/O)─┼─┼─┐ │     │     │     │        │
-              │                        │ │ │ │     │     │     │        │
-              │  [5V]  ──(from USB)────┼─┼─┼─┼─────┼─────┼─────┼────   │
-              │  [GND] ──(common)──────┼─┼─┼─┼─────┼─────┼─────┼─┐     │
-              +────────────────────────┼─┼─┼─┼─────┼─────┼─────┼─┼─┼───+
-                                        │ │ │ │     │     │     │ │ │
-                                        │ │ │ │     │     │     │ │ └────> [5V Logic Rail]
-                                        │ │ │ │     │     │     │ └──────> [GND Common]
-                                        │ │ │ │     │     │     │
-                                        │ │ │ │     │     │     ▼
-                                        │ │ │ │     │     │  [HC-SR501 PIR SENSOR]
-                                        │ │ │ │     │     │  - VCC: 5V Rail
-                                        │ │ │ │     │     │  - OUT: D2
-                                        │ │ │ │     │     │  - GND: GND Common
-                                        │ │ │ │     │     │  Note: sensitivity dial set CW,
-                                        │ │ │ │     │     │        60s warm-up after power-on
-                                        │ │ │ │     │     │
-                                        │ │ │ │     │     ▼
-                                        │ │ │ │     │  [SG90 MICRO SERVO (EYE MOVE)]
-                                        │ │ │ │     │  - Signal : D12
-                                        │ │ │ │     │  - VCC: 5V Rail
-                                        │ │ │ │     │  - GND: GND Common
-                                        │ │ │ │     │
-                                        │ │ │ │     ▼
-                                        │ │ │ │  [MG996R SERVO (YAW HEAD PAN)]
-                                        │ │ │ │  - Signal : D5
-                                        │ │ │ │  - VCC: 6V Servo Rail
-                                        │ │ │ │  - GND: GND Common
-                                        │ │ │ │
-                                        │ │ │ ▼
-                                        │ │ │ [MG996R SERVO (PITCH NECK TILT)]
-                                        │ │ │ - Signal : D6
-                                        │ │ │ - VCC: 6V Servo Rail
-                                        │ │ │ - GND: GND Common
-                                        │ │ │
-                                        │ │ ▼
-                                        │ │ [MG996R SERVO (JAW MOVE)]
-                                        │ │ - Signal : D9
-                                        │ │ - VCC: 6V Servo Rail
-                                        │ │ - GND: GND Common
-                                        │ │
-                                        │ └────────┐
-                                        ▼          │
-                                   [Junction]  [Junction]
-                                      │            │
-                                   [680Ω R]    [1KΩ R]
-                                      │            │
-                                      ▼            │
-                                   DFPLAYER RX  ───┘ (to GND)
-                                      │
-                                      ▼
-                         +─────────────────────────────────+
-                         │ DFPLAYER MINI MP3 PLAYER MODULE │
-                         │                                 │
-                         │ [VCC] ─── 5V Rail               │
-                         │ [RX]  ─── via 680Ω from D11     │
-                         │          (voltage divider:      │
-                         │           680Ω junction + 1KΩ   │
-                         │           to GND, output ~3V)   │
-                         │ [TX]  ─── to D10                │
-                         │ [SPK+] ── To Speaker (+)        │
-                         │ [SPK-] ── To Speaker (-)        │
-                         │ [GND] ─── GND Common            │
-                         +─────────────────────────────────+
+  IMPORTANT:
+  - Arduino GND and servo battery GND must connect to one common ground rail.
+  - Servo V+ must not be powered from the Arduino 5V pin.
+  - Place the 1000 uF electrolytic capacitor across the servo rail:
 
-==========================================================================
-NOTES:
-1. Common ground: Arduino GND and battery pack GND connect at ONE point.
-2. 1000µF capacitor must be wired close to the servo power distribution point.
-3. Audio files go in "mp3" folder, FAT32 SD card, filename prefix "0001_".
-4. Always wait 60 seconds after power-on before PIR sensor will behave reliably.
-==========================================================================
+        servo rail +  ----||----  servo rail GND
+                         1000 uF
+
+
+2. ARDUINO PIN MAP
+--------------------------------------------------------------------------------
+
+  +--------------------------------------------------------------------------+
+  |                              ARDUINO UNO                                 |
+  |                                                                          |
+  |  D2  SoftwareSerial TX  ---> DFPlayer RX through 680R/1k divider         |
+  |  D3  SoftwareSerial RX  <--- DFPlayer TX direct                          |
+  |  D4  Digital output    ---> North Star LED anode through 220R            |
+  |  D5  Digital output    ---> Lantern LED anode through 220R               |
+  |  D6  Servo signal      ---> MG996R hydraulic controller servo            |
+  |  D7  Digital input     <--- HC-SR501 PIR OUT                             |
+  |  D9  Servo signal      ---> MG996R head turn servo                       |
+  |  D11 Servo signal      ---> SG90 lantern arm servo                       |
+  |  5V  Logic power       ---> PIR VCC, DFPlayer VCC, LED circuits          |
+  |  GND Common ground     ---> PIR GND, DFPlayer GND, LED cathodes, servo GND|
+  +--------------------------------------------------------------------------+
+
+
+3. DFPLAYER MINI
+--------------------------------------------------------------------------------
+
+  DFPlayer VCC  ---> Arduino 5V
+  DFPlayer GND  ---> Common ground
+  DFPlayer TX   ---> Arduino D3
+  DFPlayer RX   ---> Divider node from Arduino D2:
+
+      Arduino D2 ---- 680 ohm ----+---- DFPlayer RX
+                                  |
+                                 1k ohm
+                                  |
+                                 GND
+
+  DFPlayer SPK1 ---> Speaker wire 1
+  DFPlayer SPK2 ---> Speaker wire 2
+
+  microSD card:
+  - FAT32 format
+  - folder: /mp3
+  - file: /mp3/0001_harriet.mp3
+
+
+4. SENSOR AND LEDS
+--------------------------------------------------------------------------------
+
+  HC-SR501 PIR:
+  - VCC ---> Arduino 5V
+  - OUT ---> Arduino D7
+  - GND ---> Common ground
+
+  North Star LED:
+  - Arduino D4 ---> 220 ohm resistor ---> LED anode
+  - LED cathode ---> Common ground
+
+  Lantern LED:
+  - Arduino D5 ---> 220 ohm resistor ---> LED anode
+  - LED cathode ---> Common ground
+
+
+5. SERVOS
+--------------------------------------------------------------------------------
+
+  MG996R Head Turn Servo:
+  - Signal ---> Arduino D9
+  - V+     ---> 4xAA servo rail +
+  - GND    ---> Common ground
+
+  MG996R Hydraulic Controller Servo:
+  - Signal ---> Arduino D6
+  - V+     ---> 4xAA servo rail +
+  - GND    ---> Common ground
+
+  SG90 Lantern Arm Servo:
+  - Signal ---> Arduino D11
+  - V+     ---> 4xAA servo rail +
+  - GND    ---> Common ground
+
+================================================================================
+NOTES
+================================================================================
+
+1. Tie down servo wires so they cannot pull out during the removable-shell reveal.
+2. Confirm capacitor polarity before powering the servo rail.
+3. Power on early enough for the PIR warm-up window to finish before presentation.
+4. Test the full sequence after transport.

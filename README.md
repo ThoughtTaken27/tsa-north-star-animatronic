@@ -1,111 +1,84 @@
-# "The North Star" — Harriet Tubman Animatronic Bust
+# The North Star - Harriet Tubman Animatronic Exhibit
 
-[![Badge: Competition](https://img.shields.io/badge/Competition-TSA%20Tennessee%20State%20Championship-gold.svg?style=flat-square)](https://github.com/Parthkkk/tsa-north-star-animatronic)
-[![Platform: Arduino](https://img.shields.io/badge/Platform-Arduino%20Uno-blue.svg?style=flat-square)](https://www.arduino.cc/)
-[![Language: C++](https://img.shields.io/badge/Language-C%2B%2B%20%2F%20Embedded-brightgreen.svg?style=flat-square)](https://isocpp.org/)
+[![Competition](https://img.shields.io/badge/Competition-Tennessee%20TSA%20State%202026-gold.svg?style=flat-square)](https://github.com/Parthkkk/tsa-north-star-animatronic)
+[![Platform](https://img.shields.io/badge/Platform-Arduino%20Uno-blue.svg?style=flat-square)](https://www.arduino.cc/)
+[![Language](https://img.shields.io/badge/Language-C%2B%2B%20%2F%20Embedded-brightgreen.svg?style=flat-square)](https://isocpp.org/)
 
-"The North Star" is an interactive animatronic Harriet Tubman bust built for the Tennessee TSA State Championship (2026). The system uses an Arduino Uno, servo-driven syringe hydraulics for neck tilt, and a non-blocking finite state machine.
+"The North Star" is a portable Arduino animatronic exhibit built for the 2026 Tennessee TSA Animatronics event. The figure represents Harriet Tubman as a children's museum-style exhibit: when a viewer approaches, a PIR sensor starts the narration, the head turns, the lantern lights, a fluid-powered arm rises toward the North Star, and the sequence resets for the next viewer.
 
----
+The project placed **1st at the Tennessee TSA State Championship**. This repository is a cleaned technical record of the firmware, wiring, build notes, and postmortem. Claims here are kept to what is supported by the project notes, exported Claude build history, and the current source code.
 
-## Technical Overview
+## System Summary
 
-| Metric | Specification |
+| Area | Final Build |
 | :--- | :--- |
-| **Competition** | TSA Tennessee State Championship (May 2026) |
-| **Microcontroller** | ATmega328P (Arduino Uno R3) |
-| **Actuators** | 3x TowerPro MG996R, 1x SG90 Micro Servo |
-| **Neck Tilt** | Master-slave syringe hydraulics (60ml syringes, 3/16" PVC tubing) |
-| **Audio** | DFPlayer Mini + 8Ω 3W speaker (voltage divider on RX line) |
-| **Sensor** | HC-SR501 PIR (sensitivity dial adjusted, 60s warm-up required) |
-| **Servo Power** | 4×AA battery pack (6V) with 1000µF capacitor |
-| **Arduino Power** | USB (laptop / phone charger / USB power bank) |
+| Controller | Arduino Uno-compatible ATmega328P board |
+| Trigger | HC-SR501 PIR motion sensor |
+| Audio | DFPlayer Mini with microSD narration file |
+| Motion | MG996R head turn servo, MG996R syringe-drive servo, SG90 lantern arm servo |
+| Lighting | Warm white lantern LED, orange/amber North Star LED |
+| Fluid Power | Two 60 mL syringes connected by 3/16 in vinyl tubing with blue-tinted water |
+| Power | 9V battery to Arduino barrel jack, 4xAA battery pack for servo rail, shared ground |
+| Reliability Fixes | Servo rail capacitor, DFPlayer voltage divider, PIR warm-up protocol, tubing and linkage corrections |
 
----
+## Behavior
 
-## System Architecture
+1. The Arduino waits through a 60-second PIR warm-up window after power-on.
+2. Motion on the PIR sensor starts the sequence.
+3. The DFPlayer plays `/mp3/0001_harriet.mp3`.
+4. The lantern LED turns on and the head servo turns toward the viewer.
+5. The hydraulic servo pushes the controller syringe, raising the arm through the water-filled line.
+6. The North Star LED turns on during the pointing gesture.
+7. The servos return home, audio stops, and the system enters a short cooldown.
+
+The firmware avoids blocking timing during the show loop. Servo movement, LEDs, sensor checks, and state transitions are coordinated with `millis()` through a finite state machine.
+
+## Architecture
 
 ```text
-  +────────────────────+          +──────────────────────────+
-  │ ARDUINO UNO (USB)  │          │  4×AA BATTERY PACK (6V)  │
-  │ 5V from USB port   │          │  (servo power only)      │
-  +────┬───┬───┬───┬───+          +────────────┬─────────────+
-       │   │   │   │                            │
-       │   │   │   │    (PWM pins)              │
-       │   │   │   ├────────────────────────────┼────┐
-       │   │   │   │                            │    │
-       │   │   │   ▼                   +────────┴──┐ │
-       │   │   │   [MG996R Servos] ───>│ Common GND ├─┘
-       │   │   │   (Yaw/Pitch/Jaw)     +───────────+
-       │   │   │
-       │   │   └────(D12)──> SG90 Eye Servo
-       │   │
-       │   └────(Voltage Divider 680Ω+1KΩ)──> DFPlayer RX
-       │                                        (3.3V logic)
-       ▼
-   +──────────+
-   │ PIR      │
-   │ HC-SR501 │ (D2, sensitivity dial set CW, 60s warm-up)
-   +──────────+
+                         +----------------------+
+                         |  Arduino Uno / AVR   |
+                         +----------+-----------+
+                                    |
+             +----------------------+----------------------+
+             |                      |                      |
+      PIR sensor D7          DFPlayer D2/D3          LEDs D4/D5
+             |                      |                      |
+      motion trigger       narration playback      North Star + lantern
+                                    |
+             +----------------------+----------------------+
+             |                      |                      |
+       Head servo D9       Hydraulic servo D6      Lantern servo D11
+             |                      |                      |
+       turns head          pushes syringe line      raises lantern arm
 ```
 
----
+## Repository Map
 
-## Design Details
+- [`tsa-north-star-animatronic.ino`](./tsa-north-star-animatronic.ino) - Arduino entry point and pin assignments.
+- [`src/StateEngine.cpp`](./src/StateEngine.cpp) - Non-blocking sequence state machine.
+- [`src/Actuators.cpp`](./src/Actuators.cpp) - Ramped servo wrapper with safe angle limits.
+- [`src/Sensors.cpp`](./src/Sensors.cpp) - PIR debounce handling.
+- [`src/AudioController.cpp`](./src/AudioController.cpp) - DFPlayer serial packet interface.
+- [`hardware/bom.md`](./hardware/bom.md) - Bill of materials and pin map.
+- [`hardware/mechanical_assembly.md`](./hardware/mechanical_assembly.md) - Physical frame and linkage notes.
+- [`hardware/schematics/system_schematic_ascii.txt`](./hardware/schematics/system_schematic_ascii.txt) - Text wiring diagram.
+- [`docs/assembly_guide.md`](./docs/assembly_guide.md) - Assembly and calibration guide.
+- [`docs/postmortem_failure_log.md`](./docs/postmortem_failure_log.md) - Real build failures and fixes.
+- [`docs/historical_context.md`](./docs/historical_context.md) - Historical and presentation context.
+- [`docs/engineering_notebook.md`](./docs/engineering_notebook.md) - Timeline and team roles.
 
-**Non-Blocking State Machine.** No `delay()` calls. Servo updates, PIR polling, and jaw animation all run from `millis()` timers in the main loop. Prevents stuttering when multiple subsystems update concurrently.
+## Build and Upload
 
-**Syringe Hydraulics.** A MG996R servo pushes a 60ml master syringe; fluid travels through 3/16" PVC tubing to a slave syringe that lifts the neck. The linkage uses a popsicle stick connecting the servo horn to the plunger, aligned for straight-line push. Quieter than a direct gear drive.
+1. Open [`tsa-north-star-animatronic.ino`](./tsa-north-star-animatronic.ino) in the Arduino IDE.
+2. Select **Arduino Uno** as the board.
+3. Install the standard `Servo` library if it is not already installed.
+4. Format the microSD card as FAT32.
+5. Create a folder named `mp3` on the card.
+6. Save the narration as `0001_harriet.mp3` inside that folder.
+7. Upload the sketch.
+8. Open Serial Monitor at `115200` baud for state transition logs.
 
-**Power Separation.** The Arduino runs from USB (5V). The three MG996R servos run from a 4×AA battery pack (~6V). A 1000µF capacitor across the servo rail buffers current spikes. Arduino and battery pack share a common ground.
+## Evidence Standard
 
-**DFPlayer Integration.** The DFPlayer Mini's RX line expects 3.3V logic. A voltage divider (680Ω from Arduino TX to junction, 1KΩ from junction to ground, DFPlayer RX at junction) drops the 5V signal to ~2.98V. Audio files must be named `0001_...` inside a folder called `mp3` on a FAT32 SD card.
-
-**PIR Sensor.** The HC-SR501 sensitivity potentiometer is turned clockwise (higher sensitivity). A mandatory 60-second warm-up period after power-on prevents erratic triggering during setup.
-
----
-
-## Directory Structure
-
-*   [`tsa-north-star-animatronic.ino`](./tsa-north-star-animatronic.ino) — Main sketch
-*   [`/src`](./src/) — Modular C++ classes
-    *   `StateEngine`: FSM coordinator
-    *   `Actuators`: Servo wrapper with velocity ramping
-    *   `Sensors`: PIR temporal debounce
-    *   `AudioController`: DFPlayer serial protocol
-*   [`/hardware`](./hardware/) — BOM, schematics, mechanical guide
-    *   [`bom.md`](./hardware/bom.md): Parts list, pin map, power budget
-    *   [`schematics/system_schematic_ascii.txt`](./hardware/schematics/system_schematic_ascii.txt): Wiring schematic
-*   [`/docs`](./docs/) — Build log, failure analysis, competition notes
-    *   [`postmortem_failure_log.md`](./docs/postmortem_failure_log.md): Every problem encountered and what fixed it
-    *   [`voltage_drop_analysis.md`](./docs/voltage_drop_analysis.md): Brownout analysis and capacitor sizing
-    *   [`competition_math.md`](./docs/competition_math.md): TSA rubric notes and design trade-offs
-
----
-
-## Troubleshooting Summary
-
-The [Postmortem Failure Log](./docs/postmortem_failure_log.md) covers the nine problems that came up during the build:
-
-| Problem | Root Cause | Fix |
-|---------|-----------|-----|
-| Hydraulic leak | Wrong tubing (1/4" instead of 3/16") | Correct tubing |
-| Joint stalls mid-lift | Air bubbles in line | Slow-cycle + tap to bleed |
-| Sluggish tilt | Linkage angle off | Realigned for straight push |
-| Random PIR triggers | Sensitivity too low | Turned dial CW |
-| Erratic PIR at startup | No warm-up | 60s delay after power-on |
-| DFPlayer silent | Wrong voltage divider resistors | 680Ω + 1KΩ rebuild |
-| DFPlayer silent | Bad filename | 0001_ prefix, FAT32 card |
-| Arduino resets mid-run | Servos on 5V pin | Moved to 4×AA 6V rail |
-| Arduino resets mid-run | No transient buffer | 1000µF capacitor on servo rail |
-
----
-
-## Build & Install
-
-1. Open [`tsa-north-star-animatronic.ino`](./tsa-north-star-animatronic.ino) in Arduino IDE.
-2. Install the `Servo` library (bundled with Arduino IDE).
-3. Connect Arduino Uno via USB. Select **Tools > Board > Arduino Uno**, choose the port.
-4. Compile and upload.
-5. Open Serial Monitor at **115200 baud** to observe FSM state transitions.
-6. **PIR warm-up:** wait 60 seconds after power-on before testing.
+Some early planning notes and generated drafts described parts that were not supported by the final build evidence, such as machined Delrin plungers, oscilloscope voltage captures, a custom neck-lift cylinder, and exact current measurements. Those details are intentionally not used here. The public repo should read like a strong high-school engineering project, not a lab report with invented precision.

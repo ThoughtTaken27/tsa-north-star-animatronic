@@ -18,11 +18,8 @@ required_files = [
     "docs/postmortem_failure_log.md",
     "docs/publishing_guide.md",
     "docs/historical_context.md",
-    "docs/competition_math.md",
     "docs/engineering_notebook.md",
-    "docs/voltage_drop_analysis.md",
     "hardware/mechanical_assembly.md",
-    "hardware/fluid_power_system.md",
     "tsa-north-star-animatronic.ino",
     "src/Sensors.h",
     "src/Sensors.cpp",
@@ -43,9 +40,9 @@ for f in required_files:
         size_bytes = os.path.getsize(full_path)
         with open(full_path, "r", encoding="utf-8") as file_obj:
             lines = len(file_obj.readlines())
-        print(f"✅ FOUND: {f:<50} | Lines: {lines:<5} | Size: {size_bytes:<5} bytes")
+        print(f"OK FOUND: {f:<50} | Lines: {lines:<5} | Size: {size_bytes:<5} bytes")
     else:
-        print(f"❌ MISSING: {f}")
+        print(f"FAIL MISSING: {f}")
         all_passed = False
 
 print("\n--- Phase 2: Verifying Markdown Link Integrity ---")
@@ -55,6 +52,7 @@ for md in md_files:
     print(f"\nChecking links inside: {md}")
     with open(full_path, "r", encoding="utf-8") as file_obj:
         content = file_obj.read()
+    content = re.sub(r"```.*?```", "", content, flags=re.DOTALL)
     
     # Simple regex to extract local relative links like [Text](./path) or [Text](path)
     links = re.findall(r'\[.*?\]\((.*?)\)', content)
@@ -73,9 +71,9 @@ for md in md_files:
         linked_path = os.path.normpath(os.path.join(md_dir, link_cleaned))
         
         if os.path.exists(linked_path):
-            print(f"  ✅ Link Valid: '{link}' -> resolved to local file")
+            print(f"  OK Link Valid: '{link}' -> resolved to local file")
         else:
-            print(f"  ❌ Broken Link: '{link}' -> resolved to missing path '{linked_path}'")
+            print(f"  FAIL Broken Link: '{link}' -> resolved to missing path '{linked_path}'")
             all_passed = False
 
 print("\n======================================================================")

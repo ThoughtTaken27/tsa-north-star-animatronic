@@ -4,11 +4,11 @@
  * Target Board: Arduino Uno R3 / ATmega328P
  * Development Platform: Arduino IDE / C++
  * 
- * Description: Coordinates sensor polling, audio, and motor controls
- * using a fully non-blocking, asynchronous finite state machine (FSM).
+ * Description: Coordinates PIR triggering, audio playback, LEDs, and
+ * servo-driven motion using a non-blocking finite state machine (FSM).
  * 
  * Author: Parth Khavate (Systems Integrator / Team Captain)
- * Completion Date: May 2026 — 1st Place Tennessee State Championship
+ * State Competition: April 2026 — 1st Place Tennessee State Championship
  */
 
 #include "src/Sensors.h"
@@ -17,32 +17,33 @@
 #include "src/StateEngine.h"
 
 // --- Pin Allocations (See hardware/bom.md) ---
-const uint8_t PIN_PIR_SENSOR = 2;   // Input from PIR sensor
-const uint8_t PIN_NECK_YAW   = 5;   // PWM Output to Neck Yaw MG996R
-const uint8_t PIN_NECK_PITCH = 6;   // PWM Output to Neck Pitch MG996R
-const uint8_t PIN_JAW_MOVE   = 9;   // PWM Output to Jaw Move MG996R
-const uint8_t PIN_AUDIO_RX   = 10;  // Software RX Pin (TX on DFPlayer)
-const uint8_t PIN_AUDIO_TX   = 11;  // Software TX Pin (RX on DFPlayer via 1kΩ)
-const uint8_t PIN_EYE_MOVE   = 12;  // Digital I/O to Eye Move SG90
+const uint8_t PIN_AUDIO_TX        = 2;   // Arduino TX -> DFPlayer RX through 680Ω/1kΩ divider
+const uint8_t PIN_AUDIO_RX        = 3;   // Arduino RX <- DFPlayer TX
+const uint8_t PIN_NORTH_STAR_LED  = 4;   // Orange/amber North Star LED through 220Ω
+const uint8_t PIN_LANTERN_LED     = 5;   // Warm white lantern LED through 220Ω
+const uint8_t PIN_HYDRAULIC_ARM   = 6;   // MG996R driving controller syringe linkage
+const uint8_t PIN_PIR_SENSOR      = 7;   // HC-SR501 PIR sensor OUT
+const uint8_t PIN_HEAD_TURN       = 9;   // MG996R head turn servo
+const uint8_t PIN_LANTERN_ARM     = 11;  // SG90 lantern arm servo
 
 // --- Instantiations ---
 MotionSensor motionDetector(PIN_PIR_SENSOR, 150); // 150ms temporal debounce filter
 
 // Ramped servos with custom hardware safe angle boundaries (min, max, speed scale)
-RampedServo neckYawServo(PIN_NECK_YAW, 30, 150, 1.2);
-RampedServo neckPitchServo(PIN_NECK_PITCH, 50, 140, 0.8); // Hydraulic slow lift
-RampedServo jawServo(PIN_JAW_MOVE, 20, 90, 2.5);          // Fast mouth snap
-RampedServo eyeServo(PIN_EYE_MOVE, 45, 135, 1.5);
+RampedServo headTurnServo(PIN_HEAD_TURN, 55, 125, 1.2);
+RampedServo hydraulicArmServo(PIN_HYDRAULIC_ARM, 40, 130, 0.7);
+RampedServo lanternArmServo(PIN_LANTERN_ARM, 60, 125, 1.0);
 
 AudioController audioController(PIN_AUDIO_RX, PIN_AUDIO_TX);
 
 StateEngine showSequencer(
     motionDetector, 
-    neckYawServo, 
-    neckPitchServo, 
-    jawServo, 
-    eyeServo, 
-    audioController
+    headTurnServo,
+    hydraulicArmServo,
+    lanternArmServo,
+    audioController,
+    PIN_NORTH_STAR_LED,
+    PIN_LANTERN_LED
 );
 
 void setup() {
@@ -50,14 +51,13 @@ void setup() {
     Serial.begin(115200);
     Serial.println(F("[SYSTEM INF]: Initializing \"The North Star\" Animatronic..."));
 
-    // Set random seed based on noise from floating analog pin A0 for eye/mouth randomness
+    // Seed any future randomized motion from a floating analog pin.
     randomSeed(analogRead(A0));
 
     // Initialize FSM modules and drive systems
     showSequencer.begin();
     
-    Serial.println(F("[SYSTEM INF]: Startup complete. FSM state set to STATE_IDLE."));
-    Serial.println(F("[SYSTEM INF]: Awaiting PIR motion trigger..."));
+    Serial.println(F("[SYSTEM INF]: Startup complete. PIR warm-up lock active."));
 }
 
 void loop() {
@@ -73,10 +73,11 @@ void loop() {
         lastState = currentState;
         Serial.print(F("[FSM STATE CHANGE]: New state is "));
         switch (currentState) {
+            case STATE_SENSOR_WARMUP:    Serial.println(F("STATE_SENSOR_WARMUP"));    break;
             case STATE_IDLE:             Serial.println(F("STATE_IDLE"));             break;
             case STATE_TRIGGERED:        Serial.println(F("STATE_TRIGGERED"));        break;
             case STATE_SPEAKING:         Serial.println(F("STATE_SPEAKING"));         break;
-            case STATE_HYDRAULIC_TILT:   Serial.println(F("STATE_HYDRAULIC_TILT"));   break;
+            case STATE_GESTURE:          Serial.println(F("STATE_GESTURE"));          break;
             case STATE_RETURN_TO_HOME:   Serial.println(F("STATE_RETURN_TO_HOME"));   break;
             case STATE_REST_COOLDOWN:    Serial.println(F("STATE_REST_COOLDOWN"));    break;
         }

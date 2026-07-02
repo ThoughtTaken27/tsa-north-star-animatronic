@@ -41,7 +41,7 @@ void AudioController::sendCommand(uint8_t command, uint16_t parameter) {
 }
 
 void AudioController::setVolume(uint8_t volume) {
-    volume = constrain(volume, 0, 30);
+    volume = constrain(volume, (uint8_t)0, (uint8_t)30);
     sendCommand(0x06, 0, volume);
 }
 
@@ -50,8 +50,13 @@ void AudioController::playTrack(uint16_t folderNumber, uint16_t trackNumber) {
     sendCommand(0x0F, (uint8_t)folderNumber, (uint8_t)trackNumber);
 }
 
+void AudioController::playMp3Track(uint16_t trackNumber) {
+    // 0x12 plays 0001-2999-prefixed files from the special /mp3 folder.
+    sendCommand(0x12, trackNumber);
+}
+
 void AudioController::stop() {
-    sendCommand(0x16, 0, 0); // 0x16 = Pause / Stop command
+    sendCommand(0x16, 0, 0); // 0x16 = Stop command
 }
 
 void AudioController::reset() {

@@ -1,89 +1,88 @@
-# Engineering Postmortem & Failure Log — "The North Star"
+# Engineering Failure Log - "The North Star"
 
-This log documents the problems encountered during the build, what the actual cause was, and what fixed it. Captured from the build log maintained during the 8-week development cycle.
+This postmortem records the real failure modes that mattered during the build. It intentionally avoids unsupported lab-style details such as exact oscilloscope readings or custom-machined parts.
 
----
+## 1. Servo Power Resets
 
-## 1. Hydraulic System: The First Three Days
+**Symptom:** The Arduino would reset or behave unpredictably when multiple servos moved.
 
-### Symptom
-The servo pushed the syringe plunger, but the neck barely moved. Water leaked steadily from the tubing connections onto the base. When it did move, it would rise halfway and stall.
+**Cause:** The servo rail pulled more current than the Arduino logic rail could tolerate when everything shared power too closely.
 
-### Root Cause (Three Separate Problems)
+**Fix:**
 
-**Wrong tubing size.** The first build used 1/4" inner diameter tubing instead of the required 3/16" ID. The tubing fit loosely over the syringe Luer lock tips, so water bypassed the connection on every stroke. Fixed by ordering the correct 3/16" ID vinyl tubing and rebuilding the fluid path.
+- Powered servos from a separate 4xAA pack.
+- Kept Arduino logic on its own 9V input.
+- Tied all grounds together so signal references stayed consistent.
+- Added a 1000 uF capacitor across the servo power rail to reduce brief voltage dips.
 
-**Air bubbles in the line.** Even after the correct tubing was installed, the neck would stall mid-lift. Air pockets in the tube compressed under pressure instead of transmitting force. Fixed by slow-cycling the servo while tapping the line to coax bubbles upward, then fully priming the system before operation.
+## 2. PIR Sensor False Triggers
 
-**Popsicle stick linkage geometry.** The connector between the servo horn and the syringe plunger was pushing at an angle instead of straight along the plunger axis. This wasted torque fighting the geometry. Fixed by repositioning the syringe mount and adjusting the linkage attachment point so the push was a straight line.
+**Symptom:** The HC-SR501 triggered immediately after power-on or fired when nobody was intentionally activating the exhibit.
 
-### Stress Test
-After all three fixes, the system ran 40+ cycles over two days without a single failure.
+**Cause:** The PIR sensor needed time to stabilize, and its sensitivity setting was not initially tuned for the room and wiring conditions.
 
----
+**Fix:**
 
-## 2. PIR Sensor: Phantom Triggering
+- Tuned the sensitivity potentiometer.
+- Added a 60-second startup warm-up lock in the firmware.
+- Kept a cooldown after each show cycle so the sequence would not restart instantly.
 
-### Symptom
-The sequence would start randomly with nobody in front of the sensor. Sometimes it fired twice in a row during calibration.
+## 3. Syringe Tubing Leaks and Slippage
 
-### Root Cause (Two Issues)
+**Symptom:** The fluid line leaked or slipped off when the controller syringe was pushed.
 
-**Sensitivity potentiometer set too low.** The HC-SR501 has a small dial on the board. It was turned too far counterclockwise, making the sensor barely register heat signatures and occasionally misread electrical noise as a trigger. Turning the dial clockwise toward the max sensitivity mark resolved the phantom triggering almost immediately.
+**Cause:** The first tubing fit was too loose for reliable pressure transfer.
 
-**60-second warm-up ignored.** The HC-SR501 behaves erratically during its first 60 seconds after power-on. We kept powering up and immediately testing. Once we made it standard practice to wait 60 seconds after power-on before any interaction, the behavior became completely reliable.
+**Fix:**
 
-### Competition Protocol
-Set at check-in: power on the system, start the 60-second timer, then proceed with setup while the sensor stabilizes.
+- Used 3/16 in tubing that fit tightly on the syringe tips.
+- Secured the tubing at the syringe ends.
+- Tested the line under repeated servo cycles before hiding it under the presentation layer.
 
----
+## 4. Air Bubbles in the Fluid Line
 
-## 3. DFPlayer Mini: No Audio
+**Symptom:** The hydraulic arm moved weakly or inconsistently.
 
-### Symptom
-Code uploaded, connections checked, nothing played. The module appeared dead.
+**Cause:** Air trapped in the line compressed under load, making the actuator feel springy instead of transferring motion cleanly.
 
-### Root Cause (Two Problems)
+**Fix:**
 
-**Voltage divider built wrong.** The DFPlayer Mini RX pin expects 3.3V logic, but the Arduino outputs 5V. The fix requires a voltage divider: a 680Ω resistor from Arduino TX to the junction, then a 1KΩ resistor from the junction to ground, with the DFPlayer RX connected at the junction (outputs ~2.98V). The divider was initially wired with incorrect resistor values. Rebuilding it with 680Ω + 1KΩ fixed the communication immediately.
+- Filled and cycled the line slowly.
+- Tapped the tubing while moving the syringe to release bubbles.
+- Re-tested until the arm rose consistently.
 
-**Wrong file naming convention.** The DFPlayer requires audio files to be stored in a folder called `mp3` on the root of a FAT32-formatted SD card, with filenames starting with a four-digit number (e.g., `0001_harriet_narration.mp3`). The file was initially named without leading zeros.
+## 5. Linkage Geometry Binding
 
-### Fix Summary
-- Rebuilt voltage divider: 680Ω (TX→junction) + 1KΩ (junction→GND)
-- Renamed audio file to `0001_` prefix
-- Verified card was FAT32 (Patriot 16GB)
+**Symptom:** The syringe-driven arm stalled or moved sideways instead of rising cleanly.
 
----
+**Cause:** The syringe plunger and arm linkage were not aligned. The servo was pushing at an angle, wasting torque and binding the plunger.
 
-## 4. Power System: Mid-Sequence Restarts
+**Fix:**
 
-### Symptom
-During full-sequence testing, the Arduino would reset mid-way — usually when the head servo and hydraulic servo fired simultaneously. Audio cut out, servos twitched, sequence restarted from the beginning.
+- Repositioned the controller syringe.
+- Adjusted the servo horn linkage.
+- Added pivot freedom where needed so the arm could rotate instead of forcing the plunger sideways.
 
-### Root Cause
-The servos were powered from the Arduino's 5V pin, which can source roughly 500mA. Multiple MG996R servos drawing current simultaneously pulled the rail voltage below the ATmega328P's brownout threshold, causing a reset.
+## 6. DFPlayer Mini Wiring and SD Card Setup
 
-### Fixes Applied
-- Moved all servo power off the Arduino 5V pin and onto a dedicated 6V rail from a 4×AA battery pack (1.5V × 4 = 6V).
-- Added a 1000µF 25V electrolytic capacitor across the servo power rail to act as a local charge reservoir during sudden current demand.
-- Established a common ground between Arduino GND and the battery pack GND.
+**Symptom:** The DFPlayer failed to play narration during early tests.
 
-### Stress Test
-After both changes, the full sequence ran 30 consecutive times with zero resets.
+**Causes:**
 
----
+- The DFPlayer RX line needed a safer logic-level input from the Arduino TX pin.
+- The SD card and file naming had to match the DFPlayer command being used.
 
-## Summary of All Fixes
+**Fix:**
 
-| Problem | Actual Cause | Fix |
-|---------|-------------|-----|
-| Hydraulic leak | 1/4" tubing instead of 3/16" ID | Replaced with correct tubing |
-| Hydraulic stall | Air bubbles in fluid line | Bled system by slow-cycling + tapping |
-| Hydraulic inefficiency | Popsicle stick linkage at wrong angle | Realigned for straight-line push |
-| Phantom PIR triggers | Sensitivity dial too low | Turned clockwise toward max |
-| Phantom PIR triggers | No warm-up wait | Added 60s power-on delay |
-| DFPlayer silent | Voltage divider resistor values wrong | Rebuilt with 680Ω + 1KΩ |
-| DFPlayer silent | Missing leading zeros in filename | Renamed to 0001_ prefix |
-| Arduino resetting | Servos on Arduino 5V pin (overcurrent) | Moved to 4×AA battery pack 6V rail |
-| Arduino resetting | No transient buffer on servo rail | Added 1000µF capacitor |
+- Used a 680 ohm / 1k ohm voltage divider on Arduino `D2` to DFPlayer RX.
+- Formatted the microSD card as FAT32.
+- Put the narration in `/mp3/0001_harriet.mp3`.
+- Updated the firmware to use the DFPlayer command for numbered files in the `/mp3` folder.
+
+## 7. Competition-Day Backdrop Recovery
+
+**Event:** During setup, the team realized the painted black star backdrop had been left in the nearby hotel room.
+
+**Response:** One teammate retrieved the backdrop while the others continued setup, powered the electronics, and let the PIR warm-up period run.
+
+**Outcome:** The exhibit was ready within the setup window. Judge feedback highlighted that the project was self-contained and did not need to remain plugged into a laptop during the presentation.

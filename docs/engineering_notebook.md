@@ -1,46 +1,44 @@
-# Engineering Notebook Diary — "The North Star"
+# Engineering Notebook - "The North Star"
 
-This diary summarizes the daily development log, team structure, and milestone timelines for the design and construction of "The North Star" animatronic Harriet Tubman bust.
+This notebook summarizes the build timeline, team structure, and major technical decisions for the TSA Animatronics project.
 
----
+## Team Structure
 
-## 1. Team Structure & Allocations
+- **Parth Khavate - Team Captain / Systems Integrator:** Arduino programming, wiring, DFPlayer setup, servo integration, troubleshooting, documentation, and final technical decisions.
+- **Mechanical Lead:** PVC/wood frame, servo mounting, syringe linkage, and physical construction.
+- **Creative Lead:** Head, clothing, backdrop, narration, and museum-style presentation.
 
-The project was executed under a strict division of labor across a 3-person team:
+## Build Timeline
 
-- **Lead Systems Architect & Team Captain (Parth Khavate):** Responsible for electrical power engineering, low-level asynchronous firmware development, hydraulic-mechanical design, and overall systems integration.
-- **Mechanical Designer (Team Member 2):** Focused on laser-cut MDF frame assembly, universal joint (U-joint) mounting, and structural bone proportions of the skull.
-- **Creative Lead & Textile Designer (Team Member 3):** Handled soft silicone paintwork, facial historical accuracy, hair styling, and sewing period textiles.
+### Concept and Planning
 
----
+- Chose Harriet Tubman and "The North Star" as the exhibit theme.
+- Designed the project around a children's museum interaction: approach, trigger, narration, motion, lighting, reset.
+- Planned for minimum required movement, sound, light, sensor, control technology, removable shell, and fluid power.
 
-## 2. Milestone Timeline
+### Electronics Prototype
 
-```text
-  Week 1-2      Week 3-4      Week 5-6      Week 7-8      Week 9-10
-+────────────+────────────+────────────+────────────+────────────+
-│ Design &   │ Breadboard │ Mechanical │ Fluid Link │ System     │
-│ Planning   │ Prototypes │ Assembly   │ Integration│ Calibration│
-│ Phase      │ & Firmware │ (MDF frame)│ & Debugging│ & Defense  │
-+────────────+────────────+────────────+────────────+────────────+
-```
+- Set up the Arduino Uno-compatible board.
+- Tested servo basics and breadboard wiring.
+- Planned separate Arduino logic power and servo power to reduce resets.
+- Added a 1000 uF capacitor across the servo rail.
 
-### Weeks 1–2: Research & Feasibility Phase
-- **Action:** Selected Harriet Tubman "The North Star" theme. Assessed mechanical degrees of freedom needed.
-- **Deliverable:** Created initial system-level blocks. Calculated torque limits for the MG996R servos and estimated total physical power limits.
+### Mechanical Prototype
 
-### Weeks 3–4: Electrical Prototyping & Software Core
-- **Action:** Wired the Arduino Uno R3 on a breadboard. Initialized SoftwareSerial communication with the DFPlayer Mini. Wrote the basic non-blocking state machine loop.
-- **Deliverable:** Verified PIR sensor detection limits and validated basic serial command packet transmission.
+- Built a PVC/wood skeleton with a removable outer presentation layer.
+- Mounted the head turn servo, lantern arm servo, and syringe-drive servo.
+- Built the two-syringe fluid-power mechanism with clear tubing and blue-tinted water.
 
-### Weeks 5–6: Frame Construction & Actuator Rigging
-- **Action:** Assembled the laser-cut MDF torso cage. Mounted the neck U-joint. Fitted the internal frame with eye-shifter and jaw linkages.
-- **Deliverable:** Initialized physical servo alignments and calibrated software boundaries to prevent mechanical collisions.
+### Integration and Debugging
 
-### Weeks 7–8: The Hydraulic System & Debugging Phase
-- **Action:** Constructed the hydraulic link using PVC tubing and 60ml syringes. Fought three problems: wrong tubing size (1/4" instead of 3/16" ID), air bubbles in the line, and popsicle stick linkage at the wrong angle. Brownouts started appearing when servos fired simultaneously during testing.
-- **Deliverable:** Fixed hydraulics by switching to correct 3/16" tubing, bleeding air, and realigning linkage. Fixed brownouts by moving servo power to a dedicated 4×AA battery pack and adding a 1000µF capacitor. Solved DFPlayer audio by rebuilding the voltage divider (680Ω + 1KΩ) and correcting the file naming convention.
+- Fixed tubing fit and air bubble problems in the syringe line.
+- Adjusted linkage geometry so the hydraulic arm moved through a cleaner path.
+- Tuned PIR sensitivity and added a mandatory warm-up period.
+- Fixed DFPlayer SD-card format and file naming issues.
+- Practiced the reveal and sequence timing before competition.
 
-### Weeks 9–10: Presentation Prep & Calibration
-- **Action:** Mounted the silicone skin. Applied PTFE lubricant on structural neck joints to reduce friction. Polished the technical documentation.
-- **Deliverable:** Executed continuous stress-testing. Prepared oral presentations for the judges' evaluation panel. Passed with zero mechanical or electrical failures during competition runs.
+### Competition
+
+- The project ran as a self-contained battery-powered exhibit with no laptop required during the presentation.
+- Judge feedback specifically called out the self-reliant setup and clean circuitry.
+- The team placed 1st at the Tennessee TSA State Championship.
