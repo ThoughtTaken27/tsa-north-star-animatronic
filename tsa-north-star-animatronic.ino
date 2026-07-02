@@ -21,7 +21,7 @@ const uint8_t PIN_AUDIO_TX        = 2;   // Arduino TX -> DFPlayer RX through 68
 const uint8_t PIN_AUDIO_RX        = 3;   // Arduino RX <- DFPlayer TX
 const uint8_t PIN_NORTH_STAR_LED  = 4;   // Orange/amber North Star LED through 220Ω
 const uint8_t PIN_LANTERN_LED     = 5;   // Warm white lantern LED through 220Ω
-const uint8_t PIN_HYDRAULIC_ARM   = 6;   // MG996R driving controller syringe linkage
+const uint8_t PIN_SYRINGE_ARM     = 6;   // MG996R driving right-side syringe linkage
 const uint8_t PIN_PIR_SENSOR      = 7;   // HC-SR501 PIR sensor OUT
 const uint8_t PIN_HEAD_TURN       = 9;   // MG996R head turn servo
 const uint8_t PIN_LANTERN_ARM     = 11;  // SG90 lantern arm servo
@@ -31,7 +31,7 @@ MotionSensor motionDetector(PIN_PIR_SENSOR, 150); // 150ms temporal debounce fil
 
 // Ramped servos with custom hardware safe angle boundaries (min, max, speed scale)
 RampedServo headTurnServo(PIN_HEAD_TURN, 55, 125, 1.2);
-RampedServo hydraulicArmServo(PIN_HYDRAULIC_ARM, 40, 130, 0.7);
+RampedServo syringeArmServo(PIN_SYRINGE_ARM, 40, 130, 0.7);
 RampedServo lanternArmServo(PIN_LANTERN_ARM, 60, 125, 1.0);
 
 AudioController audioController(PIN_AUDIO_RX, PIN_AUDIO_TX);
@@ -39,7 +39,7 @@ AudioController audioController(PIN_AUDIO_RX, PIN_AUDIO_TX);
 StateEngine showSequencer(
     motionDetector, 
     headTurnServo,
-    hydraulicArmServo,
+    syringeArmServo,
     lanternArmServo,
     audioController,
     PIN_NORTH_STAR_LED,

@@ -1,31 +1,32 @@
 # Assembly and Calibration Guide - "The North Star"
 
-This guide covers the practical build sequence for the final exhibit configuration: a portable waist-up animatronic with a removable shell, servo motion, LEDs, audio, PIR trigger, and syringe-based fluid power.
+This guide covers the practical build sequence for the final exhibit configuration: a portable waist-up animatronic with a PVC skeleton, exposed Arduino control base, servo motion, LEDs, audio, PIR trigger, and a syringe-driven right arm.
 
 ## Frame Setup
 
 1. Mount the central support to the plywood base.
 2. Attach the PVC spine and shoulder structure.
-3. Keep the Arduino, breadboard, batteries, speaker, and DFPlayer accessible on the base for testing and judge inspection.
-4. Route wires along the frame and tie them down before adding the outer shell.
-5. Keep the shell removable. The internal skeleton, wiring, and fluid system need to be visible during judging.
+3. Mount the head servo at the top of the PVC frame and attach the foam head through a vertical dowel.
+4. Mount the left SG90 servo at the shoulder area for the lantern arm.
+5. Mount the right-side syringe and MG996R drive linkage so the plunger moves cleanly.
+6. Keep the Arduino, breadboard, batteries, speaker, and DFPlayer accessible on the base for testing and judge inspection.
+7. Route wires along the frame and tie them down before adding the outer shell.
+8. Keep the shell removable. The internal skeleton, wiring, and syringe linkage need to be visible during judging.
 
-## Fluid Power Link
+## Syringe Linkage
 
-The fluid-power motion uses two 60 mL syringes connected by 3/16 in clear vinyl tubing:
+The right arm uses a 60 mL syringe driven by an MG996R servo linkage:
 
 ```text
- [MG996R servo] -> [controller syringe] == water line == [actuator syringe] -> [arm linkage]
+ [MG996R servo] -> [wood linkage] -> [60 mL syringe] -> [right arm linkage]
 ```
 
 Setup notes:
 
-1. Use tubing that fits tightly on the syringe tips. Oversized tubing leaks and slips under load.
-2. Fill the line with blue-tinted water so judges can see the fluid path.
-3. Remove air bubbles by slow-cycling the system and tapping the tubing.
-4. Align the servo horn and linkage so the controller syringe is pushed straight along the plunger axis.
-5. Add a pivot or loose cradle where needed so the syringe does not bind as the arm moves through an arc.
-6. Test repeatedly before adding clothing, because the fabric can hide leaks and linkage problems.
+1. Mount the syringe body firmly so it cannot twist when the servo pushes.
+2. Align the servo horn and wooden linkage so the syringe plunger is pushed straight along its axis.
+3. Add pivot freedom where needed so the arm can move through its arc without forcing the syringe sideways.
+4. Test repeatedly before adding clothing, because the fabric can hide binding and linkage problems.
 
 ## Servo Calibration
 
@@ -34,7 +35,7 @@ Never drive hobby servos to full `0` to `180` degree travel in the final build. 
 | Assembly | Servo | Pin | Home | Approx. Active Range | Purpose |
 | :--- | :--- | :---: | :---: | :---: | :--- |
 | Head turn | MG996R | `D9` | 90 deg | 55-125 deg | Turns figure toward viewer/backdrop |
-| Hydraulic drive | MG996R | `D6` | 45 deg | 40-130 deg | Pushes controller syringe |
+| Syringe drive | MG996R | `D6` | 45 deg | 40-130 deg | Moves the right arm linkage |
 | Lantern arm | SG90 | `D11` | 70 deg | 60-125 deg | Raises lantern arm |
 
 Calibration protocol:

@@ -24,7 +24,7 @@ private:
     
     MotionSensor& sensor;
     RampedServo& headServo;
-    RampedServo& hydraulicServo;
+    RampedServo& syringeServo;
     RampedServo& lanternServo;
     AudioController& audio;
     uint8_t northStarLedPin;
@@ -39,7 +39,7 @@ private:
     void handleRestCooldown();
 
 public:
-    StateEngine(MotionSensor& pir, RampedServo& head, RampedServo& hydraulic, RampedServo& lantern, AudioController& mp3, uint8_t starLed, uint8_t lanternLed);
+    StateEngine(MotionSensor& pir, RampedServo& head, RampedServo& syringe, RampedServo& lantern, AudioController& mp3, uint8_t starLed, uint8_t lanternLed);
     void begin();
     void update(); // Must be called continuously in the loop to drive the FSM
     SystemState getCurrentState() const;

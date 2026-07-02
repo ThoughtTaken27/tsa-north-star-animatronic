@@ -11,12 +11,12 @@ Harriet Tubman was born Araminta Ross in Maryland, escaped slavery, and returned
 The North Star works as both history and mechanism:
 
 - The orange/amber LED on the backdrop gives the audience a visible destination.
-- The hydraulic arm points toward that light during the narration.
+- The syringe-driven arm points toward that light during the narration.
 - The lantern and night-sky backdrop frame the exhibit as a guided escape scene.
 
 ## Presentation Choices
 
-- **Motion:** Head turn, lantern arm, and hydraulic pointing arm make the figure feel active without overcomplicating the build.
+- **Motion:** Head turn, lantern arm, and syringe-driven pointing arm make the figure feel active without overcomplicating the build.
 - **Sound:** The DFPlayer narration lets the figure "speak" directly to children.
 - **Light:** The lantern and North Star LEDs make the story legible in a dark museum setting.
 - **Reveal:** The removable shell allows judges to see that the movement is produced by simple physical mechanisms, not hidden manual control.

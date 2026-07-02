@@ -14,7 +14,7 @@ This notebook summarizes the build timeline, team structure, and major technical
 
 - Chose Harriet Tubman and "The North Star" as the exhibit theme.
 - Designed the project around a children's museum interaction: approach, trigger, narration, motion, lighting, reset.
-- Planned for minimum required movement, sound, light, sensor, control technology, removable shell, and fluid power.
+- Planned for movement, sound, light, sensor input, Arduino control, removable shell, and an inspectable syringe mechanism.
 
 ### Electronics Prototype
 
@@ -25,14 +25,14 @@ This notebook summarizes the build timeline, team structure, and major technical
 
 ### Mechanical Prototype
 
-- Built a PVC/wood skeleton with a removable outer presentation layer.
-- Mounted the head turn servo, lantern arm servo, and syringe-drive servo.
-- Built the two-syringe fluid-power mechanism with clear tubing and blue-tinted water.
+- Built a PVC/wood skeleton on a plywood base with a removable outer presentation layer.
+- Mounted the head turn servo at the top of the PVC frame, the lantern arm servo on the left shoulder, and the syringe-drive servo near the right-side arm linkage.
+- Built the visible syringe linkage used for the right-side gesture arm.
 
 ### Integration and Debugging
 
-- Fixed tubing fit and air bubble problems in the syringe line.
-- Adjusted linkage geometry so the hydraulic arm moved through a cleaner path.
+- Adjusted the syringe mount and linkage geometry so the right arm moved through a cleaner path.
+- Secured exposed wiring and servo leads to survive the removable-shell reveal.
 - Tuned PIR sensitivity and added a mandatory warm-up period.
 - Fixed DFPlayer SD-card format and file naming issues.
 - Practiced the reveal and sequence timing before competition.

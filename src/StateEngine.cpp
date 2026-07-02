@@ -1,12 +1,12 @@
 #include "StateEngine.h"
 
-StateEngine::StateEngine(MotionSensor& pir, RampedServo& head, RampedServo& hydraulic, RampedServo& lantern, AudioController& mp3, uint8_t starLed, uint8_t lanternLed)
+StateEngine::StateEngine(MotionSensor& pir, RampedServo& head, RampedServo& syringe, RampedServo& lantern, AudioController& mp3, uint8_t starLed, uint8_t lanternLed)
     : currentState(STATE_SENSOR_WARMUP),
       stateStartTime(0),
       sequenceDuration(75000), // Narration target: roughly 75 seconds
       sensor(pir),
       headServo(head),
-      hydraulicServo(hydraulic),
+      syringeServo(syringe),
       lanternServo(lantern),
       audio(mp3),
       northStarLedPin(starLed),
@@ -20,7 +20,7 @@ void StateEngine::begin() {
 
     sensor.begin();
     headServo.begin(90);
-    hydraulicServo.begin(45); // Arm down / syringe home
+    syringeServo.begin(45); // Arm down / syringe home
     lanternServo.begin(70);   // Lantern resting near body
     audio.begin();
     audio.setVolume(20); // Scale volume to 20/30
@@ -31,7 +31,7 @@ void StateEngine::begin() {
 void StateEngine::update() {
     // Update all servo ramp profiles
     headServo.update();
-    hydraulicServo.update();
+    syringeServo.update();
     lanternServo.update();
 
     switch (currentState) {
@@ -98,7 +98,7 @@ void StateEngine::handleSpeaking() {
 
     if (elapsed >= 30000) {
         currentState = STATE_GESTURE;
-        hydraulicServo.setTarget(125); // Push controller syringe to raise arm
+        syringeServo.setTarget(125); // Drive syringe linkage to move right arm
         lanternServo.setTarget(120);
         digitalWrite(northStarLedPin, HIGH);
     }
@@ -118,7 +118,7 @@ void StateEngine::handleGesture() {
     if (elapsed >= sequenceDuration) {
         currentState = STATE_RETURN_TO_HOME;
         headServo.setTarget(90);
-        hydraulicServo.setTarget(45);
+        syringeServo.setTarget(45);
         lanternServo.setTarget(70);
         digitalWrite(northStarLedPin, LOW);
         digitalWrite(lanternLedPin, LOW);
@@ -127,7 +127,7 @@ void StateEngine::handleGesture() {
 
 void StateEngine::handleReturnToHome() {
     // Wait for mechanical systems to completely return to home coordinates
-    if (headServo.isAtTarget() && hydraulicServo.isAtTarget() && lanternServo.isAtTarget()) {
+    if (headServo.isAtTarget() && syringeServo.isAtTarget() && lanternServo.isAtTarget()) {
         audio.stop();
         currentState = STATE_REST_COOLDOWN;
         stateStartTime = millis();

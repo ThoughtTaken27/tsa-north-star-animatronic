@@ -23,7 +23,7 @@ Check these manually:
 Recommended repository metadata:
 
 - **Name:** `tsa-north-star-animatronic`
-- **Description:** `Tennessee TSA state-winning Arduino animatronic exhibit with PIR trigger, DFPlayer audio, LEDs, servo motion, and syringe fluid power.`
+- **Description:** `Tennessee TSA state-winning Arduino animatronic exhibit with PIR trigger, DFPlayer audio, LEDs, servo motion, and a syringe-driven arm.`
 - **Topics:** `arduino`, `embedded-systems`, `robotics`, `animatronics`, `servo`, `dfplayer`, `hardware-portfolio`, `tsa`
 
 ## Suggested Visual Assets
@@ -32,7 +32,7 @@ Add real media if available:
 
 - `docs/assets/demo_hook.gif` - 10-15 second full sequence.
 - `docs/assets/wiring.jpg` - clear electronics photo.
-- `docs/assets/hydraulic_linkage.jpg` - syringe mechanism photo.
+- `docs/assets/syringe_linkage.jpg` - syringe mechanism photo.
 - `docs/assets/reveal.jpg` - removable shell / internal skeleton.
 
 Do not add these paths to the README until the files exist.
@@ -41,7 +41,7 @@ Do not add these paths to the README until the files exist.
 
 Short version:
 
-> Built a 1st-place Tennessee TSA animatronic exhibit with Arduino control, PIR triggering, DFPlayer audio, LED lighting, servo motion, and a syringe-based fluid-power arm.
+> Built a 1st-place Tennessee TSA animatronic exhibit with Arduino control, PIR triggering, DFPlayer audio, LED lighting, servo motion, and a syringe-driven arm.
 
 More technical version:
 
@@ -50,7 +50,7 @@ More technical version:
 ## Claim Rules
 
 - Say "battery-powered" only when describing the competition presentation setup.
-- Say "fluid power" or "syringe-based hydraulic linkage"; avoid overstating it as industrial hydraulics.
+- Say "syringe-driven linkage"; avoid making the arm mechanism sound more complex than it is.
 - Do not claim oscilloscope measurements unless there is a saved trace or photo.
 - Do not claim machined parts, custom seals, or precision fabrication unless there is evidence.
 - Keep judge feedback phrased as feedback, not as an official written score unless you have the score sheet.

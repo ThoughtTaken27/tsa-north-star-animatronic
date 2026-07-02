@@ -18,6 +18,7 @@ required_files = [
     "docs/postmortem_failure_log.md",
     "docs/publishing_guide.md",
     "docs/historical_context.md",
+    "docs/evidence_summary.md",
     "docs/engineering_notebook.md",
     "hardware/mechanical_assembly.md",
     "tsa-north-star-animatronic.ino",

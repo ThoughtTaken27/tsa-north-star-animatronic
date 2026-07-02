@@ -4,9 +4,9 @@
 [![Platform](https://img.shields.io/badge/Platform-Arduino%20Uno-blue.svg?style=flat-square)](https://www.arduino.cc/)
 [![Language](https://img.shields.io/badge/Language-C%2B%2B%20%2F%20Embedded-brightgreen.svg?style=flat-square)](https://isocpp.org/)
 
-"The North Star" is a portable Arduino animatronic exhibit built for the 2026 Tennessee TSA Animatronics event. The figure represents Harriet Tubman as a children's museum-style exhibit: when a viewer approaches, a PIR sensor starts the narration, the head turns, the lantern lights, a fluid-powered arm rises toward the North Star, and the sequence resets for the next viewer.
+"The North Star" is a portable Arduino animatronic exhibit built for the 2026 Tennessee TSA Animatronics event. When a viewer approaches, a PIR sensor starts the narration, the head turns, the lantern lights, the right arm moves through a syringe linkage, and the North Star LED turns on.
 
-The project placed **1st at the Tennessee TSA State Championship**. This repository is a cleaned technical record of the firmware, wiring, build notes, and postmortem. Claims here are kept to what is supported by the project notes, exported Claude build history, and the current source code.
+**Result:** 1st place at the Tennessee TSA State Championship, with a documented score of **127 / 130**.
 
 ## System Summary
 
@@ -15,11 +15,11 @@ The project placed **1st at the Tennessee TSA State Championship**. This reposit
 | Controller | Arduino Uno-compatible ATmega328P board |
 | Trigger | HC-SR501 PIR motion sensor |
 | Audio | DFPlayer Mini with microSD narration file |
-| Motion | MG996R head turn servo, MG996R syringe-drive servo, SG90 lantern arm servo |
+| Motion | MG996R head servo, MG996R syringe-drive servo, SG90 lantern arm servo |
 | Lighting | Warm white lantern LED, orange/amber North Star LED |
-| Fluid Power | Two 60 mL syringes connected by 3/16 in vinyl tubing with blue-tinted water |
-| Power | 9V battery to Arduino barrel jack, 4xAA battery pack for servo rail, shared ground |
-| Reliability Fixes | Servo rail capacitor, DFPlayer voltage divider, PIR warm-up protocol, tubing and linkage corrections |
+| Arm Drive | 60 mL syringe linkage driven by an MG996R servo |
+| Power | 9V battery to Arduino barrel jack, switched 4xAA battery pack for servo rail, shared ground |
+| Reliability Fixes | Servo rail capacitor, DFPlayer voltage divider, PIR warm-up protocol, syringe-linkage corrections |
 
 ## Behavior
 
@@ -27,30 +27,40 @@ The project placed **1st at the Tennessee TSA State Championship**. This reposit
 2. Motion on the PIR sensor starts the sequence.
 3. The DFPlayer plays `/mp3/0001_harriet.mp3`.
 4. The lantern LED turns on and the head servo turns toward the viewer.
-5. The hydraulic servo pushes the controller syringe, raising the arm through the water-filled line.
+5. The syringe-drive servo moves the right arm linkage.
 6. The North Star LED turns on during the pointing gesture.
 7. The servos return home, audio stops, and the system enters a short cooldown.
 
 The firmware avoids blocking timing during the show loop. Servo movement, LEDs, sensor checks, and state transitions are coordinated with `millis()` through a finite state machine.
 
-## Architecture
+## System Design
 
-```text
-                         +----------------------+
-                         |  Arduino Uno / AVR   |
-                         +----------+-----------+
-                                    |
-             +----------------------+----------------------+
-             |                      |                      |
-      PIR sensor D7          DFPlayer D2/D3          LEDs D4/D5
-             |                      |                      |
-      motion trigger       narration playback      North Star + lantern
-                                    |
-             +----------------------+----------------------+
-             |                      |                      |
-       Head servo D9       Hydraulic servo D6      Lantern servo D11
-             |                      |                      |
-       turns head          pushes syringe line      raises lantern arm
+```mermaid
+flowchart TD
+    Base["Plywood base\nArduino, breadboard, DFPlayer, PIR, speaker, batteries"]
+    Spine["1/2 in PVC spine and shoulder crossbar"]
+    HeadServo["MG996R head servo (D9)"]
+    Head["Foam head"]
+    LanternServo["SG90 lantern arm servo (D11)"]
+    Lantern["Wood-stick lantern arm + warm white LED"]
+    SyringeServo["MG996R syringe-drive servo (D6)"]
+    Syringe["60 mL syringe linkage"]
+    RightArm["Right pointing arm"]
+
+    Base --> Spine
+    Spine --> HeadServo --> Head
+    Spine --> LanternServo --> Lantern
+    Base --> SyringeServo --> Syringe --> RightArm
+```
+
+```mermaid
+flowchart LR
+    PIR["PIR motion sensor (D7)"] --> Arduino["Arduino state machine"]
+    Arduino --> Audio["DFPlayer narration (D2/D3)"]
+    Arduino --> Lights["Lantern LED (D5)\nNorth Star LED (D4)"]
+    Arduino --> Head["Head servo (D9)"]
+    Arduino --> Arm["Syringe-drive servo (D6)"]
+    Arduino --> Lantern["Lantern arm servo (D11)"]
 ```
 
 ## Repository Map
@@ -67,6 +77,7 @@ The firmware avoids blocking timing during the show loop. Servo movement, LEDs, 
 - [`docs/postmortem_failure_log.md`](./docs/postmortem_failure_log.md) - Real build failures and fixes.
 - [`docs/historical_context.md`](./docs/historical_context.md) - Historical and presentation context.
 - [`docs/engineering_notebook.md`](./docs/engineering_notebook.md) - Timeline and team roles.
+- [`docs/evidence_summary.md`](./docs/evidence_summary.md) - Private-source evidence summary without personal/order data.
 
 ## Build and Upload
 
@@ -79,6 +90,6 @@ The firmware avoids blocking timing during the show loop. Servo movement, LEDs, 
 7. Upload the sketch.
 8. Open Serial Monitor at `115200` baud for state transition logs.
 
-## Evidence Standard
+## Media Plan
 
-Some early planning notes and generated drafts described parts that were not supported by the final build evidence, such as machined Delrin plungers, oscilloscope voltage captures, a custom neck-lift cylinder, and exact current measurements. Those details are intentionally not used here. The public repo should read like a strong high-school engineering project, not a lab report with invented precision.
+Final photos and demo clips will be added under `docs/assets/`. The useful shots are the completed exhibit, the exposed skeleton, the electronics layout, the syringe linkage, and a short full-sequence demo.

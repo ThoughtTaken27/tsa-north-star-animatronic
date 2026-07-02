@@ -1,19 +1,19 @@
 # Engineering Failure Log - "The North Star"
 
-This postmortem records the real failure modes that mattered during the build. It intentionally avoids unsupported lab-style details such as exact oscilloscope readings or custom-machined parts.
+This postmortem records the failures that actually shaped the final build: power stability, sensor reliability, audio playback, and the mechanical alignment of the exposed servo/syringe system.
 
 ## 1. Servo Power Resets
 
 **Symptom:** The Arduino would reset or behave unpredictably when multiple servos moved.
 
-**Cause:** The servo rail pulled more current than the Arduino logic rail could tolerate when everything shared power too closely.
+**Cause:** The servos could pull enough current during movement to disturb the control electronics when power was not separated cleanly.
 
 **Fix:**
 
-- Powered servos from a separate 4xAA pack.
+- Powered servos from a separate switched 4xAA battery pack.
 - Kept Arduino logic on its own 9V input.
 - Tied all grounds together so signal references stayed consistent.
-- Added a 1000 uF capacitor across the servo power rail to reduce brief voltage dips.
+- Added a 1000 uF capacitor across the servo rail to reduce short voltage dips.
 
 ## 2. PIR Sensor False Triggers
 
@@ -27,43 +27,32 @@ This postmortem records the real failure modes that mattered during the build. I
 - Added a 60-second startup warm-up lock in the firmware.
 - Kept a cooldown after each show cycle so the sequence would not restart instantly.
 
-## 3. Syringe Tubing Leaks and Slippage
+## 3. Syringe Linkage Binding
 
-**Symptom:** The fluid line leaked or slipped off when the controller syringe was pushed.
+**Symptom:** The right-side syringe arm stalled, moved weakly, or pushed sideways instead of producing a clean gesture.
 
-**Cause:** The first tubing fit was too loose for reliable pressure transfer.
-
-**Fix:**
-
-- Used 3/16 in tubing that fit tightly on the syringe tips.
-- Secured the tubing at the syringe ends.
-- Tested the line under repeated servo cycles before hiding it under the presentation layer.
-
-## 4. Air Bubbles in the Fluid Line
-
-**Symptom:** The hydraulic arm moved weakly or inconsistently.
-
-**Cause:** Air trapped in the line compressed under load, making the actuator feel springy instead of transferring motion cleanly.
+**Cause:** The syringe plunger and wooden linkage were sensitive to angle. When the servo horn pushed off-axis, the mechanism wasted torque and the plunger resisted motion.
 
 **Fix:**
 
-- Filled and cycled the line slowly.
-- Tapped the tubing while moving the syringe to release bubbles.
-- Re-tested until the arm rose consistently.
+- Repositioned the syringe body and support point.
+- Adjusted the MG996R servo horn and short wooden linkage.
+- Added enough pivot freedom for the arm to move through its arc without forcing the syringe sideways.
+- Reduced software travel limits so the servo stayed inside the reliable mechanical range.
 
-## 5. Linkage Geometry Binding
+## 4. Exposed Wiring Reliability
 
-**Symptom:** The syringe-driven arm stalled or moved sideways instead of rising cleanly.
+**Symptom:** Wires and servo leads could shift during testing, transport, or the removable-shell reveal.
 
-**Cause:** The syringe plunger and arm linkage were not aligned. The servo was pushing at an angle, wasting torque and binding the plunger.
+**Cause:** The electronics were intentionally visible on the plywood base, which made the project easier to inspect but also exposed the wiring to bumps and pulls.
 
 **Fix:**
 
-- Repositioned the controller syringe.
-- Adjusted the servo horn linkage.
-- Added pivot freedom where needed so the arm could rotate instead of forcing the plunger sideways.
+- Routed wires along the PVC spine and base.
+- Used zip ties to secure loose runs.
+- Kept the Arduino, breadboard, DFPlayer, speaker, batteries, and PIR sensor accessible for inspection and troubleshooting.
 
-## 6. DFPlayer Mini Wiring and SD Card Setup
+## 5. DFPlayer Mini Wiring and SD Card Setup
 
 **Symptom:** The DFPlayer failed to play narration during early tests.
 
@@ -79,7 +68,7 @@ This postmortem records the real failure modes that mattered during the build. I
 - Put the narration in `/mp3/0001_harriet.mp3`.
 - Updated the firmware to use the DFPlayer command for numbered files in the `/mp3` folder.
 
-## 7. Competition-Day Backdrop Recovery
+## 6. Competition-Day Backdrop Recovery
 
 **Event:** During setup, the team realized the painted black star backdrop had been left in the nearby hotel room.
 

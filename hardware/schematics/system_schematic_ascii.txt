@@ -24,7 +24,7 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   +---------+---------+
             |
             +---- MG996R head servo
-            +---- MG996R hydraulic servo
+            +---- MG996R syringe-drive servo
             +---- SG90 lantern arm servo
 
 
@@ -47,7 +47,7 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   |  D3  SoftwareSerial RX  <--- DFPlayer TX direct                          |
   |  D4  Digital output    ---> North Star LED anode through 220R            |
   |  D5  Digital output    ---> Lantern LED anode through 220R               |
-  |  D6  Servo signal      ---> MG996R hydraulic controller servo            |
+  |  D6  Servo signal      ---> MG996R syringe-drive servo                   |
   |  D7  Digital input     <--- HC-SR501 PIR OUT                             |
   |  D9  Servo signal      ---> MG996R head turn servo                       |
   |  D11 Servo signal      ---> SG90 lantern arm servo                       |
@@ -104,7 +104,7 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   - V+     ---> 4xAA servo rail +
   - GND    ---> Common ground
 
-  MG996R Hydraulic Controller Servo:
+  MG996R Syringe-Drive Servo:
   - Signal ---> Arduino D6
   - V+     ---> 4xAA servo rail +
   - GND    ---> Common ground
@@ -113,6 +113,26 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   - Signal ---> Arduino D11
   - V+     ---> 4xAA servo rail +
   - GND    ---> Common ground
+
+6. PHYSICAL LAYOUT
+--------------------------------------------------------------------------------
+
+                  [foam head]
+                      |
+             [MG996R head servo]
+                      |
+       left shoulder--+--right shoulder
+           |                 |
+     [SG90 lantern]    [syringe arm linkage]
+           |                 |
+   wood lantern frame  [MG996R syringe-drive servo]
+
+  Plywood base:
+  - Arduino and breadboard
+  - DFPlayer and speaker
+  - PIR sensor
+  - 9V Arduino battery
+  - switched 4xAA servo battery pack
 
 ================================================================================
 NOTES
