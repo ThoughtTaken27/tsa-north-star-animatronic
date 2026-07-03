@@ -3,6 +3,7 @@
 [![Competition](https://img.shields.io/badge/Competition-Tennessee%20TSA%20State%202026-gold.svg?style=flat-square)](https://github.com/Parthkkk/tsa-north-star-animatronic)
 [![Platform](https://img.shields.io/badge/Platform-Arduino%20Uno-blue.svg?style=flat-square)](https://www.arduino.cc/)
 [![Language](https://img.shields.io/badge/Language-C%2B%2B%20%2F%20Embedded-brightgreen.svg?style=flat-square)](https://isocpp.org/)
+[![Build](https://github.com/Parthkkk/tsa-north-star-animatronic/actions/workflows/compile.yml/badge.svg)](https://github.com/Parthkkk/tsa-north-star-animatronic/actions/workflows/compile.yml)
 
 "The North Star" is a portable Arduino animatronic exhibit built for the 2026 Tennessee TSA Animatronics event. When a viewer approaches, a PIR sensor starts the narration, the head turns, the lantern lights, the right arm moves through a syringe linkage, and the North Star LED turns on.
 
@@ -89,6 +90,8 @@ flowchart LR
 - [`docs/historical_context.md`](./docs/historical_context.md) - Historical and presentation context.
 - [`docs/engineering_notebook.md`](./docs/engineering_notebook.md) - Timeline and team roles.
 - [`docs/evidence_summary.md`](./docs/evidence_summary.md) - Private-source evidence summary without personal/order data.
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md) - Development setup, commit convention, and claim-accuracy rules.
+- [`CHANGELOG.md`](./CHANGELOG.md) - Versioned history of the repository and firmware.
 
 ## Build and Upload
 
