@@ -4,23 +4,23 @@ MotionSensor::MotionSensor(uint8_t inputPin, uint32_t debounceMs)
     : pin(inputPin), 
       debounceDuration(debounceMs), 
       lastStateChangeTime(0), 
-      lastSteadyState(LOW), 
+      lastRawState(LOW), 
       lastDebouncedState(LOW) {}
 
 void MotionSensor::begin() {
     pinMode(pin, INPUT);
-    lastSteadyState = digitalRead(pin);
-    lastDebouncedState = lastSteadyState;
+    lastRawState = digitalRead(pin);
+    lastDebouncedState = lastRawState;
 }
 
 bool MotionSensor::update() {
     bool currentState = digitalRead(pin);
     uint32_t currentTime = millis();
 
-    // Reset timer if state toggled
-    if (currentState != lastSteadyState) {
+    // Reset timer if raw state toggled
+    if (currentState != lastRawState) {
         lastStateChangeTime = currentTime;
-        lastSteadyState = currentState;
+        lastRawState = currentState;
     }
 
     // Verify if state has been steady for the required duration

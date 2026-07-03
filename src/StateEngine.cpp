@@ -3,14 +3,16 @@
 StateEngine::StateEngine(MotionSensor& pir, RampedServo& head, RampedServo& syringe, RampedServo& lantern, AudioController& mp3, uint8_t starLed, uint8_t lanternLed)
     : currentState(STATE_SENSOR_WARMUP),
       stateStartTime(0),
-      sequenceDuration(75000), // Narration target: roughly 75 seconds
+      sequenceDuration(NARRATION_DURATION),
       sensor(pir),
       headServo(head),
       syringeServo(syringe),
       lanternServo(lantern),
       audio(mp3),
       northStarLedPin(starLed),
-      lanternLedPin(lanternLed) {}
+      lanternLedPin(lanternLed),
+      lastHeadTarget(HEAD_HOME),
+      lastLanternTarget(LANTERN_HOME) {}
 
 void StateEngine::begin() {
     pinMode(northStarLedPin, OUTPUT);
@@ -19,11 +21,11 @@ void StateEngine::begin() {
     digitalWrite(lanternLedPin, LOW);
 
     sensor.begin();
-    headServo.begin(90);
-    syringeServo.begin(45); // Arm down / syringe home
-    lanternServo.begin(70);   // Lantern resting near body
+    headServo.begin(HEAD_HOME);
+    syringeServo.begin(SYRINGE_HOME);
+    lanternServo.begin(LANTERN_HOME);
     audio.begin();
-    audio.setVolume(20); // Scale volume to 20/30
+    audio.setVolume(DFPLAYER_VOLUME);
     currentState = STATE_SENSOR_WARMUP;
     stateStartTime = millis();
 }
@@ -61,7 +63,7 @@ void StateEngine::update() {
 
 void StateEngine::handleSensorWarmup() {
     // HC-SR501 modules can output unstable readings during initial calibration.
-    if ((millis() - stateStartTime) >= 60000) {
+    if ((millis() - stateStartTime) >= PIR_WARMUP_MS) {
         currentState = STATE_IDLE;
     }
 }
@@ -78,8 +80,10 @@ void StateEngine::handleTriggered() {
     audio.playMp3Track(1); // /mp3/0001_harriet.mp3
     stateStartTime = millis();
     digitalWrite(lanternLedPin, HIGH);
-    headServo.setTarget(105);
-    lanternServo.setTarget(95);
+    headServo.setTarget(HEAD_SPEAK_RIGHT);
+    lastHeadTarget = HEAD_SPEAK_RIGHT;
+    lanternServo.setTarget(LANTERN_SPEAK);
+    lastLanternTarget = LANTERN_SPEAK;
     currentState = STATE_SPEAKING;
 }
 
@@ -88,18 +92,25 @@ void StateEngine::handleSpeaking() {
     uint32_t elapsed = currentTime - stateStartTime;
     
     // Slow head scan while the narration begins.
-    if (elapsed < 12000) {
-        headServo.setTarget(105);
-    } else if (elapsed < 22000) {
-        headServo.setTarget(75);
+    uint8_t newHeadTarget;
+    if (elapsed < SPEAKING_PHASE_1_MS) {
+        newHeadTarget = HEAD_SPEAK_RIGHT;
+    } else if (elapsed < SPEAKING_PHASE_2_MS) {
+        newHeadTarget = HEAD_SPEAK_LEFT;
     } else {
-        headServo.setTarget(90);
+        newHeadTarget = HEAD_HOME;
+    }
+    // Only command the servo when the target actually changes
+    if (newHeadTarget != lastHeadTarget) {
+        headServo.setTarget(newHeadTarget);
+        lastHeadTarget = newHeadTarget;
     }
 
-    if (elapsed >= 30000) {
+    if (elapsed >= GESTURE_TRIGGER_MS) {
         currentState = STATE_GESTURE;
-        syringeServo.setTarget(125); // Drive syringe linkage to move right arm
-        lanternServo.setTarget(120);
+        syringeServo.setTarget(SYRINGE_ACTIVE);
+        lanternServo.setTarget(LANTERN_GESTURE);
+        lastLanternTarget = LANTERN_GESTURE;
         digitalWrite(northStarLedPin, HIGH);
     }
 }
@@ -109,17 +120,24 @@ void StateEngine::handleGesture() {
     uint32_t elapsed = currentTime - stateStartTime;
 
     // Keep the figure oriented toward the backdrop as the arm points.
-    if (elapsed < 52000) {
-        headServo.setTarget(80);
+    uint8_t newHeadTarget;
+    if (elapsed < GESTURE_HEAD_TURN_MS) {
+        newHeadTarget = HEAD_GESTURE_AWAY;
     } else {
-        headServo.setTarget(95);
+        newHeadTarget = HEAD_GESTURE_RETURN;
+    }
+    if (newHeadTarget != lastHeadTarget) {
+        headServo.setTarget(newHeadTarget);
+        lastHeadTarget = newHeadTarget;
     }
 
     if (elapsed >= sequenceDuration) {
         currentState = STATE_RETURN_TO_HOME;
-        headServo.setTarget(90);
-        syringeServo.setTarget(45);
-        lanternServo.setTarget(70);
+        headServo.setTarget(HEAD_HOME);
+        lastHeadTarget = HEAD_HOME;
+        syringeServo.setTarget(SYRINGE_HOME);
+        lanternServo.setTarget(LANTERN_HOME);
+        lastLanternTarget = LANTERN_HOME;
         digitalWrite(northStarLedPin, LOW);
         digitalWrite(lanternLedPin, LOW);
     }
@@ -138,7 +156,7 @@ void StateEngine::handleRestCooldown() {
     uint32_t currentTime = millis();
     
     // Hold system in inactive rest block for 10 seconds to prevent rapid trigger loop
-    if ((currentTime - stateStartTime) >= 10000) {
+    if ((currentTime - stateStartTime) >= REST_COOLDOWN_MS) {
         currentState = STATE_IDLE;
     }
 }

@@ -8,7 +8,7 @@ private:
     uint8_t pin;
     uint32_t debounceDuration;
     uint32_t lastStateChangeTime;
-    bool lastSteadyState;
+    bool lastRawState;       // Last raw digitalRead() value (before debounce)
     bool lastDebouncedState;
 
 public:

@@ -6,7 +6,18 @@
 
 "The North Star" is a portable Arduino animatronic exhibit built for the 2026 Tennessee TSA Animatronics event. When a viewer approaches, a PIR sensor starts the narration, the head turns, the lantern lights, the right arm moves through a syringe linkage, and the North Star LED turns on.
 
-**Result:** 1st place at the Tennessee TSA State Championship, with a documented score of **127 / 130**.
+**Result:** 1st place at the Tennessee TSA State Championship.
+
+## Competition Score
+
+| Category | Score | Max |
+| :--- | ---: | ---: |
+| Model Appearance (x3 multiplier) | 27 | 30 |
+| Model Function | 70 | 70 |
+| Presentation / Interview | 30 | 30 |
+| **Total** | **127** | **130** |
+
+Judge feedback: "Met the prompt very well." The exhibit was self-contained (battery-powered, no laptop required) and judges specifically noted the clean internal circuitry during the shell reveal.
 
 ## System Summary
 

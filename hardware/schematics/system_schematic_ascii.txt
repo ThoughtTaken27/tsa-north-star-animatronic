@@ -2,7 +2,61 @@
 SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
 ================================================================================
 
-1. POWER OVERVIEW
+1. PHYSICAL LAYOUT (FRONT VIEW)
+--------------------------------------------------------------------------------
+
+                     .---.
+                    /  O  O \          <-- Painted foam head (burnt sienna)
+                    |  ___  |             with googly eyes and dark purple
+                    \  ---  /             mesh fabric headwrap
+                     `---'
+                      | |                  1/4" wooden dowel neck
+                      | |
+              +-------+ +-------+
+              |                 |
+     4" PVC  |    PVC T-jct     |  4" PVC
+     shoulder|    (spine top)   |  shoulder
+              |                 |
+    [SG90]--- +                 + ---[wood dowel]
+     ^         \               /         |
+     |   blue   \    1/2"     /    right arm
+  lantern      PVC       PVC        dowel + zip ties
+  arm servo    spine      spine        |
+  (D11)                    \           |
+     |                      \     [60mL syringe]
+  wood stick                  \    horizontal,
+  + popsicle                  base \  zip-tied to
+  stick lantern                     PVC + dowel
+  frame                                 |
+  with warm                             |
+  white LED                        [MG996R servo]
+  (D5)                              on plywood base
+                                    (D6) -- drives
+                                     syringe via
+                                     wood linkage
+  .------------------------------------------------.
+  |            PLYWOOD BASE (12" x 12")             |
+  |                                                 |
+  |  +----------+  +-------+  +--------+  +-------+ |
+  |  | Arduino  |  | Bread-|  | DFPlayer|  | 4xAA  | |
+  |  | Uno R3   |  | board |  | Mini    |  | batt  | |
+  |  | (blue)   |  |       |  | + SD    |  | pack  | |
+  |  +----------+  +-------+  +--------+  +-------+ |
+  |                                                 |
+  |  [9V battery]    [Speaker]    [HC-SR501 PIR]    |
+  |                                                 |
+  |  [1000uF capacitor across servo rail]           |
+  .------------------------------------------------.
+       ^^^^ ^^^^  ^^  ^^^^^  ^^  ^^^^ ^^^^  ^^
+         jumper wires (red, orange, yellow, blue,
+         green, black, white) + zip-tied to spine
+
+  Removable fabric shell (not shown) fits over the
+  PVC skeleton for presentation. Removed in <10s
+  for judge inspection of internal mechanics.
+
+
+2. POWER OVERVIEW
 --------------------------------------------------------------------------------
 
   9V BATTERY + BARREL JACK
@@ -10,59 +64,56 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
         v
   +-------------------+
   |   ARDUINO UNO     |
-  |  onboard 5V rail  |
-  +---------+---------+
-            |
-            +---- 5V logic rail: PIR, DFPlayer, LEDs
-
-
-  4xAA BATTERY PACK WITH SWITCH  (6V nominal)
-        |
-        v
+  |  onboard 5V rail  |      +---- 5V logic: PIR, DFPlayer, LEDs
   +-------------------+
+                         |
+  4xAA BATTERY PACK (6V) |
+        |                |
+        v                v
+  +-------------------+  COMMON GROUND RAIL
   |  SERVO POWER RAIL |
-  +---------+---------+
-            |
-            +---- MG996R head servo
-            +---- MG996R syringe-drive servo
-            +---- SG90 lantern arm servo
-
+  +-------------------+
+        |
+        +---- MG996R head servo (D9)
+        +---- MG996R syringe-drive servo (D6)
+        +---- SG90 lantern arm servo (D11)
 
   IMPORTANT:
-  - Arduino GND and servo battery GND must connect to one common ground rail.
-  - Servo V+ must not be powered from the Arduino 5V pin.
-  - Place the 1000 uF electrolytic capacitor across the servo rail:
+  - Arduino GND and servo battery GND share one common ground rail.
+  - Servo V+ is NOT connected to the Arduino 5V pin.
+  - 1000uF 25V electrolytic capacitor across servo rail (polarized):
 
         servo rail +  ----||----  servo rail GND
-                         1000 uF
+                         1000uF
+                         (long leg = +, stripe = -)
 
 
-2. ARDUINO PIN MAP
+3. ARDUINO PIN MAP
 --------------------------------------------------------------------------------
 
   +--------------------------------------------------------------------------+
   |                              ARDUINO UNO                                 |
   |                                                                          |
-  |  D2  SoftwareSerial TX  ---> DFPlayer RX through 680R/1k divider         |
+  |  D2  SoftwareSerial TX  ---> DFPlayer RX through 680R/1k divider        |
   |  D3  SoftwareSerial RX  <--- DFPlayer TX direct                          |
-  |  D4  Digital output    ---> North Star LED anode through 220R            |
-  |  D5  Digital output    ---> Lantern LED anode through 220R               |
-  |  D6  Servo signal      ---> MG996R syringe-drive servo                   |
+  |  D4  Digital output    ---> North Star LED (orange) through 220R         |
+  |  D5  Digital output    ---> Lantern LED (warm white) through 220R         |
+  |  D6  Servo signal      ---> MG996R syringe-drive servo (on base)         |
   |  D7  Digital input     <--- HC-SR501 PIR OUT                             |
-  |  D9  Servo signal      ---> MG996R head turn servo                       |
-  |  D11 Servo signal      ---> SG90 lantern arm servo                       |
+  |  D9  Servo signal      ---> MG996R head turn servo (top of PVC spine)     |
+  |  D11 Servo signal      ---> SG90 lantern arm servo (left shoulder)       |
   |  5V  Logic power       ---> PIR VCC, DFPlayer VCC, LED circuits          |
-  |  GND Common ground     ---> PIR GND, DFPlayer GND, LED cathodes, servo GND|
+  |  GND Common ground     ---> PIR GND, DFPlayer GND, LED cathodes, servo   |
   +--------------------------------------------------------------------------+
 
 
-3. DFPLAYER MINI
+4. DFPLAYER MINI WIRING
 --------------------------------------------------------------------------------
 
   DFPlayer VCC  ---> Arduino 5V
   DFPlayer GND  ---> Common ground
-  DFPlayer TX   ---> Arduino D3
-  DFPlayer RX   ---> Divider node from Arduino D2:
+  DFPlayer TX   ---> Arduino D3 (direct)
+  DFPlayer RX   ---> Voltage divider from Arduino D2:
 
       Arduino D2 ---- 680 ohm ----+---- DFPlayer RX
                                   |
@@ -70,75 +121,86 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
                                   |
                                  GND
 
+      Output: 5V x (1000 / (680 + 1000)) = ~2.98V (safe for 3.3V RX)
+
   DFPlayer SPK1 ---> Speaker wire 1
   DFPlayer SPK2 ---> Speaker wire 2
 
   microSD card:
-  - FAT32 format
+  - FAT32 format (card must be 32GB or smaller)
   - folder: /mp3
   - file: /mp3/0001_harriet.mp3
+  - 44.1kHz MP3 recommended
 
 
-4. SENSOR AND LEDS
+5. SENSORS AND LEDs
 --------------------------------------------------------------------------------
 
-  HC-SR501 PIR:
+  HC-SR501 PIR SENSOR (white Fresnel dome on green PCB):
   - VCC ---> Arduino 5V
   - OUT ---> Arduino D7
   - GND ---> Common ground
+  - Two orange potentiometers: sensitivity + delay adjustment
+  - 60-second warm-up period enforced in firmware after power-on
 
-  North Star LED:
-  - Arduino D4 ---> 220 ohm resistor ---> LED anode
+  North Star LED (orange, on backdrop):
+  - Arduino D4 ---> 220 ohm ---> LED anode
   - LED cathode ---> Common ground
 
-  Lantern LED:
-  - Arduino D5 ---> 220 ohm resistor ---> LED anode
+  Lantern LED (warm white, in wood-stick lantern on left arm):
+  - Arduino D5 ---> 220 ohm ---> LED anode
   - LED cathode ---> Common ground
 
 
-5. SERVOS
+6. SERVOS
 --------------------------------------------------------------------------------
 
-  MG996R Head Turn Servo:
+  MG996R HEAD TURN SERVO (mounted at top of PVC spine):
   - Signal ---> Arduino D9
   - V+     ---> 4xAA servo rail +
   - GND    ---> Common ground
+  - Drives foam head through 1/4" vertical dowel
+  - Software limits: 55-125 degrees (home = 90)
 
-  MG996R Syringe-Drive Servo:
+  MG996R SYRINGE-DRIVE SERVO (mounted on plywood base):
   - Signal ---> Arduino D6
   - V+     ---> 4xAA servo rail +
   - GND    ---> Common ground
+  - Drives 60mL syringe through wooden popstick linkage
+  - Syringe is horizontal, zip-tied to right PVC + wood dowel
+  - Software limits: 40-130 degrees (home = 45)
 
-  SG90 Lantern Arm Servo:
+  SG90 LANTERN ARM SERVO (mounted on left PVC shoulder):
   - Signal ---> Arduino D11
   - V+     ---> 4xAA servo rail +
   - GND    ---> Common ground
+  - Blue-bodied micro servo with white horn
+  - Drives wood-stick lantern frame with warm white LED
+  - Software limits: 60-125 degrees (home = 70)
 
-6. PHYSICAL LAYOUT
+
+7. PHYSICAL FRAME SUMMARY
 --------------------------------------------------------------------------------
 
-                  [foam head]
-                      |
-             [MG996R head servo]
-                      |
-       left shoulder--+--right shoulder
-           |                 |
-     [SG90 lantern]    [syringe arm linkage]
-           |                 |
-   wood lantern frame  [MG996R syringe-drive servo]
-
-  Plywood base:
-  - Arduino and breadboard
-  - DFPlayer and speaker
-  - PIR sensor
-  - 9V Arduino battery
-  - switched 4xAA servo battery pack
+  - Base:       12" x 12" x 3/4" plywood with wooden dowel feet
+  - Spine:      1/2" PVC pipe, ~14" tall, in floor flange screwed to base
+  - Shoulders:  PVC T-junction at spine top, 4" PVC pipes to elbows
+  - Head:       6" foam ball, painted burnt sienna, on 1/4" dowel
+  - Neck post:  1/4" round wooden dowel, ~4" tall, on MG996R servo horn
+  - Right arm:  5/16" wood dowel driven by 60mL syringe (MG996R on base)
+  - Left arm:   1/4" wood dowel with popsicle-stick lantern frame (SG90)
+  - Wiring:     Multi-color Dupont jumpers, zip-tied to PVC spine
+  - Shell:      Fabric/clothing removable in <10 seconds for judging
+  - Fasteners:  Black nylon zip ties throughout
 
 ================================================================================
 NOTES
 ================================================================================
-
 1. Tie down servo wires so they cannot pull out during the removable-shell reveal.
 2. Confirm capacitor polarity before powering the servo rail.
-3. Power on early enough for the PIR warm-up window to finish before presentation.
-4. Test the full sequence after transport.
+3. Power on early enough for the PIR warm-up window (60s) to finish.
+4. Test the full sequence after transport, not just before packing.
+5. Keep syringe mechanism visible to judges — the reveal is part of scoring.
+6. The right arm dowel must pivot at the shoulder; the syringe pushes one end
+   so the arm rotates around the pivot to raise the pointing end.
+================================================================================
