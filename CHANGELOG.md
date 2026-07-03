@@ -12,9 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `CONTRIBUTING.md` documenting the development setup, commit convention, integrity script, and claim-accuracy rules.
 - This `CHANGELOG.md`.
 
-## [1.0.0] - 2026-04-10
+## [v1.0-competition] - 2026-04-10
 
-Competition build shipped to the 2026 Tennessee TSA State Leadership Conference — **1st place, 127 / 130**.
+Competition build shipped to the 2026 Tennessee TSA State Leadership Conference — **1st place, 127 / 130**. Tagged at the shipped commit as `v1.0-competition` (the competition-evaluation date, not the date of the repository's git history).
 
 ### Added
 
@@ -26,7 +26,7 @@ Competition build shipped to the 2026 Tennessee TSA State Leadership Conference 
 - Hardware documentation: bill of materials and pin map ([`hardware/bom.md`](./hardware/bom.md)), mechanical assembly notes ([`hardware/mechanical_assembly.md`](./hardware/mechanical_assembly.md)), ASCII wiring diagram ([`hardware/schematics/system_schematic_ascii.txt`](./hardware/schematics/system_schematic_ascii.txt)).
 - Engineering documentation: assembly guide, postmortem failure log, historical context, engineering notebook, evidence summary, and publishing guide (see [`docs/`](./docs/)).
 - `scripts/verify_files.py` — programmatic repository path, file-presence, and markdown link-integrity verification.
-- GitHub Actions workflow ([`.github/workflows/compile.yml`](./github/workflows/compile.yml)) compiling the sketch with `arduino-cli` and running the verification script on every push and pull request.
+- GitHub Actions workflow ([`.github/workflows/compile.yml`](./.github/workflows/compile.yml)) compiling the sketch with `arduino-cli` and running the verification script on every push and pull request.
 - `.clang-format` (Google base, 4-space indent, 100-column limit).
 - MIT open-source license.
 

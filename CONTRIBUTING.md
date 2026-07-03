@@ -17,7 +17,7 @@ This repository documents a completed competition build (1st place, Tennessee TS
    python3 scripts/verify_files.py
    ```
 
-2. If your change touches firmware, confirm it compiles. Locally with `arduino-cli`：
+2. If your change touches firmware, confirm it compiles. Locally with `arduino-cli`:
 
    ```bash
    arduino-cli core install arduino:avr
