@@ -77,7 +77,7 @@ void StateEngine::handleIdle() {
 }
 
 void StateEngine::handleTriggered() {
-    audio.playMp3Track(1); // /mp3/0001_harriet.mp3
+    audio.playMp3Track(1); // /mp3/0001.mp3
     stateStartTime = millis();
     digitalWrite(lanternLedPin, HIGH);
     headServo.setTarget(HEAD_SPEAK_RIGHT);

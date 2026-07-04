@@ -21,6 +21,8 @@ required_files = [
     "docs/evidence_summary.md",
     "docs/engineering_notebook.md",
     "hardware/mechanical_assembly.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
     "tsa-north-star-animatronic.ino",
     "src/Sensors.h",
     "src/Sensors.cpp",

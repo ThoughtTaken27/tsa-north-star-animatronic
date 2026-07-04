@@ -37,7 +37,7 @@ Judge feedback: "Met the prompt very well." The exhibit was self-contained (batt
 
 1. The Arduino waits through a 60-second PIR warm-up window after power-on.
 2. Motion on the PIR sensor starts the sequence.
-3. The DFPlayer plays `/mp3/0001_harriet.mp3`.
+3. The DFPlayer plays `/mp3/0001.mp3`.
 4. The lantern LED turns on and the head servo turns toward the viewer.
 5. The syringe-drive servo moves the right arm linkage.
 6. The North Star LED turns on during the pointing gesture.
@@ -100,7 +100,7 @@ flowchart LR
 3. Install the standard `Servo` library if it is not already installed.
 4. Format the microSD card as FAT32.
 5. Create a folder named `mp3` on the card.
-6. Save the narration as `0001_harriet.mp3` inside that folder.
+6. Save the narration as `0001.mp3` inside that folder.
 7. Upload the sketch.
 8. Open Serial Monitor at `115200` baud for state transition logs.
 

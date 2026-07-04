@@ -8,7 +8,7 @@ This guide covers the practical build sequence for the final exhibit configurati
 2. Attach the PVC spine and shoulder structure.
 3. Mount the head servo at the top of the PVC frame and attach the foam head through a vertical dowel.
 4. Mount the left SG90 servo at the shoulder area for the lantern arm.
-5. Mount the right-side syringe and MG996R drive linkage so the plunger moves cleanly.
+5. Mount the right-side syringe and MG996R drive linkage so the plunger moves cleanly. The right arm pivots on a plain metal pin through a drilled hole at the shoulder — no powered servo at the hinge.
 6. Keep the Arduino, breadboard, batteries, speaker, and DFPlayer accessible on the base for testing and judge inspection.
 7. Route wires along the frame and tie them down before adding the outer shell.
 8. Keep the shell removable. The internal skeleton, wiring, and syringe linkage need to be visible during judging.

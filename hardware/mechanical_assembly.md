@@ -23,6 +23,7 @@ The right-side gesture arm is driven by a visible syringe linkage:
 - A large 60 mL syringe is mounted horizontally on the right side of the frame.
 - An MG996R servo on the base drives the syringe through a short wooden linkage.
 - The syringe linkage connects to the right-side arm mechanism.
+- The arm pivots on a plain metal pin through a drilled hole at the shoulder. The hole is slightly larger than the pin diameter so the arm swings freely without binding, while remaining constrained to a single axis of rotation. No powered servo is used at the hinge.
 - Linkage alignment matters more than force. If the plunger or arm is pushed sideways, it binds and wastes servo torque.
 
 ### Lantern Arm

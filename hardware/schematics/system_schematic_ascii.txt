@@ -129,7 +129,7 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   microSD card:
   - FAT32 format (card must be 32GB or smaller)
   - folder: /mp3
-  - file: /mp3/0001_harriet.mp3
+  - file: /mp3/0001.mp3
   - 44.1kHz MP3 recommended
 
 
@@ -187,7 +187,7 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   - Shoulders:  PVC T-junction at spine top, 4" PVC pipes to elbows
   - Head:       6" foam ball, painted burnt sienna, on 1/4" dowel
   - Neck post:  1/4" round wooden dowel, ~4" tall, on MG996R servo horn
-  - Right arm:  5/16" wood dowel driven by 60mL syringe (MG996R on base)
+  - Right arm:  5/16" wood dowel driven by 60mL syringe (MG996R on base); pivots on a plain metal pin through a drilled hole at the shoulder (no powered servo at the hinge)
   - Left arm:   1/4" wood dowel with popsicle-stick lantern frame (SG90)
   - Wiring:     Multi-color Dupont jumpers, zip-tied to PVC spine
   - Shell:      Fabric/clothing removable in <10 seconds for judging
@@ -201,6 +201,7 @@ NOTES
 3. Power on early enough for the PIR warm-up window (60s) to finish.
 4. Test the full sequence after transport, not just before packing.
 5. Keep syringe mechanism visible to judges — the reveal is part of scoring.
-6. The right arm dowel must pivot at the shoulder; the syringe pushes one end
-   so the arm rotates around the pivot to raise the pointing end.
+6. The right arm dowel pivots on a plain metal pin at the shoulder; the syringe
+   pushes one end so the arm rotates around the pin to raise the pointing end.
+   No servo or motor is used at the hinge.
 ================================================================================

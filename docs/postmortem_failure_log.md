@@ -19,12 +19,15 @@ This postmortem records the failures that actually shaped the final build: power
 
 **Symptom:** The HC-SR501 triggered immediately after power-on or fired when nobody was intentionally activating the exhibit.
 
-**Cause:** The PIR sensor needed time to stabilize, and its sensitivity setting was not initially tuned for the room and wiring conditions.
+**Cause:** The PIR sensor needed time to stabilize, and the on-board potentiometers and jumper were not correctly configured for the room and wiring conditions. The HiLetgo HC-SR501 modules have no printed pin labels, which meant the correct VCC-OUT-GND pinout had to be identified through systematic testing of all possible combinations before the sensor could be trusted.
 
 **Fix:**
 
-- Tuned the sensitivity potentiometer.
-- Added a 60-second startup warm-up lock in the firmware.
+- Identified the correct pin order by exhaustive testing (VCC-OUT-GND, left to right with the dome facing you).
+- Turned the sensitivity potentiometer fully clockwise (maximum sensitivity).
+- Turned the time-delay potentiometer fully counter-clockwise (shortest output pulse, approximately 3 seconds).
+- Moved the on-board jumper cap to the H position (repeatable trigger mode).
+- Added a 60-second startup warm-up lock in the firmware so the sensor has time to learn the background infrared profile before accepting triggers.
 - Kept a cooldown after each show cycle so the sequence would not restart instantly.
 
 ## 3. Syringe Linkage Binding
@@ -65,7 +68,8 @@ This postmortem records the failures that actually shaped the final build: power
 
 - Used a 680 ohm / 1k ohm voltage divider on Arduino `D2` to DFPlayer RX.
 - Formatted the microSD card as FAT32.
-- Put the narration in `/mp3/0001_harriet.mp3`.
+- Put the narration in `/mp3/0001.mp3`.
+- Ran `dot_clean` on the mounted SD card volume before ejecting from macOS to remove hidden `._` resource fork files that crash the DFPlayer.
 - Updated the firmware to use the DFPlayer command for numbered files in the `/mp3` folder.
 
 ## 6. Competition-Day Backdrop Recovery
