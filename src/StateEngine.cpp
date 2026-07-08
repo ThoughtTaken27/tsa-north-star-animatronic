@@ -77,7 +77,13 @@ void StateEngine::handleIdle() {
 }
 
 void StateEngine::handleTriggered() {
-    audio.playMp3Track(1); // /mp3/0001.mp3
+    // Check DFPlayer presence (matches competition firmware fallback behavior)
+    if (audio.isReady()) {
+        audio.playMp3Track(1); // /mp3/0001_harriet.mp3
+    } else {
+        // DFPlayer not detected: run lights and motion without audio
+        Serial.println(F("WARNING: DFPlayer not found. Lights and movement will still work."));
+    }
     stateStartTime = millis();
     digitalWrite(lanternLedPin, HIGH);
     headServo.setTarget(HEAD_SPEAK_RIGHT);
@@ -138,7 +144,8 @@ void StateEngine::handleGesture() {
         syringeServo.setTarget(SYRINGE_HOME);
         lanternServo.setTarget(LANTERN_HOME);
         lastLanternTarget = LANTERN_HOME;
-        digitalWrite(northStarLedPin, LOW);
+        // North Star LED stays ON as a beacon (matches competition firmware behavior)
+        // digitalWrite(northStarLedPin, LOW);
         digitalWrite(lanternLedPin, LOW);
     }
 }
@@ -147,6 +154,9 @@ void StateEngine::handleReturnToHome() {
     // Wait for mechanical systems to completely return to home coordinates
     if (headServo.isAtTarget() && syringeServo.isAtTarget() && lanternServo.isAtTarget()) {
         audio.stop();
+        digitalWrite(lanternLedPin, LOW);
+        // North Star LED stays ON as a beacon (matches competition firmware behavior)
+        // digitalWrite(northStarLedPin, LOW);
         currentState = STATE_REST_COOLDOWN;
         stateStartTime = millis();
     }

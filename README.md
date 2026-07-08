@@ -18,7 +18,7 @@
 | Presentation / Interview | 30 | 30 |
 | **Total** | **127** | **130** |
 
-Judge feedback: "Met the prompt very well." The exhibit was self-contained (battery-powered, no laptop required) and judges specifically noted the clean internal circuitry during the shell reveal.
+Judge feedback: "Met the prompt very well." The exhibit was self-contained (battery-powered, no laptop required) and judges specifically noted the clean internal circuitry during the shell reveal. See [`docs/evidence_summary.md`](./docs/evidence_summary.md) for the official rating form breakdown.
 
 ## System Summary
 
@@ -77,7 +77,8 @@ flowchart LR
 
 ## Repository Map
 
-- [`tsa-north-star-animatronic.ino`](./tsa-north-star-animatronic.ino) - Arduino entry point and pin assignments.
+- [`tsa-north-star-animatronic.ino`](./tsa-north-star-animatronic.ino) - Arduino entry point and pin assignments (modular, non-blocking FSM version).
+- [`board_firmware_recovered.ino`](./board_firmware_recovered.ino) - Hand-reconstruction of the firmware read back off the competition Arduino. Blocking, linear-sequence version with human-readable narration. See header note for recovery method.
 - [`src/StateEngine.cpp`](./src/StateEngine.cpp) - Non-blocking sequence state machine.
 - [`src/Actuators.cpp`](./src/Actuators.cpp) - Ramped servo wrapper with safe angle limits.
 - [`src/Sensors.cpp`](./src/Sensors.cpp) - PIR debounce handling.

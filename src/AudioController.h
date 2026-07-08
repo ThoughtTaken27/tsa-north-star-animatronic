@@ -9,9 +9,11 @@ private:
     uint8_t rxPin;
     uint8_t txPin;
     SoftwareSerial audioSerial;
+    bool dfPlayerReady = false;
     
     void sendCommand(uint8_t command, uint8_t parameterMSB, uint8_t parameterLSB);
     void sendCommand(uint8_t command, uint16_t parameter);
+    bool checkPresence();
 
 public:
     AudioController(uint8_t rx, uint8_t tx);
@@ -21,6 +23,7 @@ public:
     void playMp3Track(uint16_t trackNumber);
     void stop();
     void reset();
+    bool isReady() const;
 };
 
 #endif

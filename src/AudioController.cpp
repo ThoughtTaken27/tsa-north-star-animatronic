@@ -10,6 +10,27 @@ void AudioController::begin() {
     delay(500); // Wait for DFPlayer boot sequence
     reset();
     delay(500); // Wait for reset stabilization
+    
+    // Check DFPlayer presence by polling for any response after reset
+    dfPlayerReady = checkPresence();
+}
+
+bool AudioController::checkPresence() {
+    // After reset, the DFPlayer may send a response byte.
+    // Poll briefly for any available data.
+    uint32_t startTime = millis();
+    while ((millis() - startTime) < 200) {
+        if (audioSerial.available() > 0) {
+            // Drain any bytes
+            while (audioSerial.available()) audioSerial.read();
+            return true;
+        }
+    }
+    return false;
+}
+
+bool AudioController::isReady() const {
+    return dfPlayerReady;
 }
 
 void AudioController::sendCommand(uint8_t command, uint8_t parameterMSB, uint8_t parameterLSB) {
