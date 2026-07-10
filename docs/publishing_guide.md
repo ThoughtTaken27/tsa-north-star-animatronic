@@ -30,10 +30,11 @@ Recommended repository metadata:
 
 Add real media if available:
 
-- `docs/assets/demo_hook.gif` - 10-15 second full sequence.
-- `docs/assets/wiring.jpg` - clear electronics photo.
-- `docs/assets/syringe_linkage.jpg` - syringe mechanism photo.
-- `docs/assets/reveal.jpg` - removable shell / internal skeleton.
+- `docs/assets/exhibit.jpg` - completed exhibit with fabric shell and painted head. **Added.**
+- `docs/assets/wiring.jpg` - clear electronics photo. **Added.**
+- `docs/assets/syringe_linkage.jpg` - syringe mechanism photo. **Added.**
+- `docs/assets/reveal.jpg` - removable shell / internal skeleton. **Added.**
+- `docs/assets/demo_hook.gif` - 10-15 second full sequence. Still needed.
 
 Do not add these paths to the README until the files exist.
 

@@ -17,6 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **CHANGELOG v1.2 microSD capacity entry updated**: the v1.2 changelog claimed microSD was "corrected from 8 GB to Patriot LX 16 GB", but a later commit (`b746122`) reverted it back to 8 GB because the pack listing showed 16 GB but the actual cards were 8 GB each. Updated the changelog to reflect the final state.
 - **Photo-verified corrections**: cross-checked build photos against repo docs and fixed three discrepancies: (1) the syringe drive linkage was described as "popsicle stick" / "popstick" / "wood linkage" in the schematic, assembly guide, BOM, and postmortem — photos confirm it is a round wooden dowel, not a popsicle stick. All references updated to "wooden dowel linkage". (2) The plywood base was described without paint or feet — photos show it is painted white with four short wooden dowel feet. Updated `mechanical_assembly.md`, `system_schematic_ascii.txt`, and `hardware/bom.md`. (3) Confirmed the microcontroller is Arduino Uno R3 (blue PCB) as documented — no Nano was used in the competition build.
 
+### Added
+
+- **Build photos**: added 4 verified build photos to `docs/assets/` — `exhibit.jpg` (completed exhibit with fabric shell), `wiring.jpg` (electronics layout on white-painted base), `syringe_linkage.jpg` (MG996R servo driving 60 mL syringe through wooden dowel linkage), and `reveal.jpg` (exposed PVC skeleton with both arms and syringes). Updated README with an image table and publishing guide with asset status. A short full-sequence demo clip (`demo_hook.gif`) is still needed.
+
 ## [v1.2] - 2026-07-10
 
 ### Fixed

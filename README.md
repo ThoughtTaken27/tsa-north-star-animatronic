@@ -115,6 +115,13 @@ flowchart LR
 7. Upload the sketch.
 8. Open Serial Monitor at `115200` baud for state transition logs.
 
-## Media Plan
+## Media
 
-Final photos and demo clips will be added under `docs/assets/`. The useful shots are the completed exhibit, the exposed skeleton, the electronics layout, the syringe linkage, and a short full-sequence demo.
+| Photo | What it shows |
+| :---: | :--- |
+| ![Exhibit](docs/assets/exhibit.jpg) | Completed exhibit with fabric shell, painted head, and name plaque. |
+| ![Wiring](docs/assets/wiring.jpg) | Electronics layout: Arduino Uno, breadboard, DFPlayer, speaker, PIR, and battery pack on the white-painted base. |
+| ![Syringe linkage](docs/assets/syringe_linkage.jpg) | MG996R servo driving the 60 mL syringe through a wooden dowel linkage. |
+| ![Reveal](docs/assets/reveal.jpg) | Internal PVC skeleton with both arms, syringes, and servos exposed for judge inspection. |
+
+A short full-sequence demo clip (`docs/assets/demo_hook.gif`) will be added when available.
