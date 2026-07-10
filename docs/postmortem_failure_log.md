@@ -24,7 +24,7 @@ This postmortem records the failures that actually shaped the final build: power
 **Fix:**
 
 - Identified the correct pin order by exhaustive testing (VCC-OUT-GND, left to right with the dome facing you).
-- Turned the sensitivity potentiometer fully clockwise (maximum sensitivity).
+- Turned the sensitivity potentiometer fully counter-clockwise (maximum sensitivity).
 - Turned the time-delay potentiometer fully counter-clockwise (shortest output pulse, approximately 3 seconds).
 - Moved the on-board jumper cap to the H position (repeatable trigger mode).
 - Added a 60-second startup warm-up lock in the firmware so the sensor has time to learn the background infrared profile before accepting triggers.

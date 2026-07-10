@@ -1,31 +1,30 @@
 /*
  * "The North Star" — Harriet Tubman Animatronic Bust Firmware
- * (RECOVERED / RECONSTRUCTED VERSION — see note below)
+ * (COMPETITION VERSION — the code that actually ran on the Arduino)
  *
  * Target Board: Arduino Uno R3 / ATmega328P
  *
- * RECOVERY NOTE
- * -------------
- * This sketch is a hand-reconstruction of the firmware that was physically
- * read back off the competition Arduino (flash dump dated 2026-07-06). The chip
- * cannot store C++ source, only compiled machine code, so this is NOT the
- * original source — it is a faithful behavioral equivalent derived by
- * disassembling the on-chip flash (avr-objdump) and tracing the loop() logic.
+ * This is the ACTUAL blocking firmware used at the Tennessee TSA State
+ * Leadership Conference on April 10, 2026. It was written collaboratively
+ * and iterated across multiple sessions leading up to the competition.
  *
  * It differs from tsa-north-star-animatronic.ino (the modular repo version):
  *   * This build is BLOCKING: it drives the show with delay() calls in a
  *     single linear sequence, not a non-blocking millis() FSM.
- *   * It prints human-readable narration strings (e.g. "Head turning...")
- *     rather than [FSM STATE CHANGE] debug names.
- *   * It refers to the arm as "hydraulic" and the reset phase as "outro".
- *   * It has a DFPlayer-presence fallback so lights/motion still run if the
- *     audio module is missing.
+ *   * It uses the DFRobotDFPlayerMini library for audio control.
+ *   * The hydraulic arm waits a precise number of seconds after audio
+ *     starts before moving (synced to the narration).
+ *   * The North Star LED stays ON between rounds (beacon effect).
+ *   * The lantern LED turns OFF during the outro.
+ *   * It has a DFPlayer-presence fallback so lights/motion still run
+ *     if the audio module is missing.
  *
- * Pin allocations (verified against the disassembly):
- *   D2/D3 - DFPlayer serial (TX/RX)
- *   D4    - North Star LED (amber)
- *   D5    - Lantern LED (warm white)
- *   D6    - Arm/syringe servo (MG996R)
+ * Pin allocations:
+ *   D2    - Arduino RX (SoftwareSerial) <- DFPlayer TX (direct)
+ *   D3    - Arduino TX (SoftwareSerial) -> DFPlayer RX (through 680/1k divider)
+ *   D4    - North Star LED (orange, through 220 ohm)
+ *   D5    - Lantern LED (warm white, through 220 ohm)
+ *   D6    - Syringe-drive servo (MG996R)
  *   D7    - PIR sensor OUT
  *   D9    - Head turn servo (MG996R)
  *   D11   - Lantern arm servo (SG90)
@@ -36,147 +35,241 @@
 
 #include <Servo.h>
 #include <SoftwareSerial.h>
+#include <DFRobotDFPlayerMini.h>
 
-// --- Pin Allocations ---
-const uint8_t PIN_AUDIO_TX        = 2;
-const uint8_t PIN_AUDIO_RX        = 3;
-const uint8_t PIN_NORTH_STAR_LED  = 4;
-const uint8_t PIN_LANTERN_LED     = 5;
-const uint8_t PIN_SYRINGE_ARM     = 6;
-const uint8_t PIN_PIR_SENSOR      = 7;
-const uint8_t PIN_HEAD_TURN       = 9;
-const uint8_t PIN_LANTERN_ARM     = 11;
+SoftwareSerial mySerial(2, 3);
+DFRobotDFPlayerMini myDFPlayer;
 
-// --- Servos ---
-Servo headServo;        // D9
-Servo armServo;         // D6  (called "hydraulic arm" on the chip)
-Servo lanternArmServo;  // D11
+Servo headServo;
+Servo leftArmServo;
+Servo hydraulicServo;
 
-// --- Audio ---
-SoftwareSerial mp3Serial(PIN_AUDIO_RX, PIN_AUDIO_TX); // RX, TX
+// ==========================
+// PIN SETUP
+// ==========================
+const int pirPin = 7;
+const int lanternPin = 5;
+const int starPin = 4;
 
-bool dfPlayerReady = false;
+// ==========================
+// HEAD SETTINGS (Pin 9)
+// ==========================
+int headAway = 90;
+int headForward = 60;
 
-// ----------------------------------------------------------------------------
-// DFPlayer low-level packet (10-byte protocol, same as AudioController.cpp)
-// ----------------------------------------------------------------------------
-void dfPlayerSend(uint8_t command, uint16_t parameter) {
-    uint8_t packet[10];
-    packet[0] = 0x7E;
-    packet[1] = 0xFF;
-    packet[2] = 0x06;
-    packet[3] = command;
-    packet[4] = 0x00;
-    packet[5] = (uint8_t)(parameter >> 8);
-    packet[6] = (uint8_t)(parameter & 0xFF);
-    uint16_t checksum = 0 - (packet[1] + packet[2] + packet[3] +
-                              packet[4] + packet[5] + packet[6]);
-    packet[7] = (uint8_t)(checksum >> 8);
-    packet[8] = (uint8_t)(checksum & 0xFF);
-    packet[9] = 0xEF;
-    for (uint8_t i = 0; i < 10; i++) mp3Serial.write(packet[i]);
+// ==========================
+// LEFT ARM SETTINGS (Pin 11)
+// ==========================
+int leftDown = 0;
+int leftUp = 90;
+
+// ==========================
+// HYDRAULIC SETTINGS (Pin 6)
+// ==========================
+int hydroRest = 70;
+int hydroPush = 18;
+
+// IMPORTANT:
+// If this grinds, try 19, then 20, then 21.
+// Do NOT go lower unless you KNOW it is safe.
+
+// ==========================
+// AUDIO SETTINGS
+// ==========================
+int audioLengthSeconds = 33;
+int volumeLevel = 30;
+
+// ==========================
+// MOVEMENT SPEEDS
+// ==========================
+int headSpeed = 20;        // lower number = faster
+int leftArmSpeed = 20;
+int hydraulicSpeed = 35;   // slightly slower helps fluid power
+
+// ==========================
+// SYSTEM FLAGS
+// ==========================
+bool audioReady = false;
+bool canTrigger = true;
+
+// ==========================
+// SMOOTH SERVO MOVE
+// ==========================
+void moveServoSmooth(Servo &myServo, int startAngle, int endAngle, int stepDelay) {
+  if (startAngle < endAngle) {
+    for (int a = startAngle; a <= endAngle; a++) {
+      myServo.write(a);
+      delay(stepDelay);
+    }
+  } else {
+    for (int a = startAngle; a >= endAngle; a--) {
+      myServo.write(a);
+      delay(stepDelay);
+    }
+  }
 }
 
-void dfPlayerReset()       { dfPlayerSend(0x0C, 0); }
-void dfPlayerPlayMp3(uint16_t n) { dfPlayerSend(0x12, n); } // /mp3/000N_*.mp3
-void dfPlayerStop()        { dfPlayerSend(0x16, 0); }
-void dfPlayerVolume(uint8_t v)    { dfPlayerSend(0x06, constrain(v, 0, 30)); }
+// ==========================
+// MAIN SHOW SEQUENCE
+// ==========================
+void runSequence() {
+  Serial.println("MOTION DETECTED! Starting sequence...");
 
-// ----------------------------------------------------------------------------
-// setup()
-// ----------------------------------------------------------------------------
+  // RESET — turn both lights OFF briefly before each new round
+  digitalWrite(lanternPin, LOW);
+  digitalWrite(starPin, LOW);
+  delay(600);
+
+  // STEP 1: Lantern turns on
+  digitalWrite(lanternPin, HIGH);
+  delay(500);
+
+  // STEP 2: Head turns toward visitor
+  Serial.println("Head turning...");
+  moveServoSmooth(headServo, headAway, headForward, headSpeed);
+  delay(200);
+
+  // STEP 3: Audio starts — CLOCK STARTS HERE
+  unsigned long audioStartTime = millis();
+  if (audioReady) {
+    Serial.println("Playing audio...");
+    myDFPlayer.playMp3Folder(1);
+  } else {
+    Serial.println("DFPlayer not ready. Running without audio.");
+  }
+  delay(500);
+
+  // STEP 4: Left arm raises lantern
+  Serial.println("Raising lantern...");
+  moveServoSmooth(leftArmServo, leftDown, leftUp, leftArmSpeed);
+  delay(200);
+
+  // WAIT until exactly 18 seconds after audio started
+  unsigned long hydraulicTargetTime = audioStartTime + 18000UL;
+  unsigned long nowTime = millis();
+  if (nowTime < hydraulicTargetTime) {
+    delay(hydraulicTargetTime - nowTime);
+  }
+
+  // STEP 5: Hydraulic arm points upward
+  Serial.println("Hydraulic arm moving...");
+  moveServoSmooth(hydraulicServo, hydroRest, hydroPush, hydraulicSpeed);
+  delay(200);
+
+  // STEP 6: North Star turns on
+  digitalWrite(starPin, HIGH);
+  Serial.println("North Star ON.");
+
+  // STEP 7: Wait until 5 seconds before audio ends, then begin outro
+  unsigned long totalAudioMs = (unsigned long)audioLengthSeconds * 1000UL;
+  unsigned long outroTargetTime = audioStartTime + totalAudioMs - 5000UL;
+  unsigned long nowTime2 = millis();
+  if (nowTime2 < outroTargetTime) {
+    delay(outroTargetTime - nowTime2);
+  }
+
+  // STEP 8: Outro begins
+  Serial.println("Outro starting...");
+
+  // Lower left arm
+  moveServoSmooth(leftArmServo, leftUp, leftDown, leftArmSpeed);
+  delay(200);
+
+  // Head turns away
+  moveServoSmooth(headServo, headForward, headAway, headSpeed);
+  delay(200);
+
+  // Lantern OFF — turns off at outro
+  digitalWrite(lanternPin, LOW);
+  delay(200);
+
+  // STEP 9: Hydraulic servo returns to rest
+  Serial.println("Returning hydraulic servo to rest...");
+  moveServoSmooth(hydraulicServo, hydroPush, hydroRest, hydraulicSpeed);
+  delay(200);
+
+  // NOTE: Star stays ON — glowing until next visitor
+
+  // Safety stop for audio
+  if (audioReady) {
+    myDFPlayer.stop();
+  }
+
+  Serial.println("Sequence complete. North Star staying ON until next visitor.");
+
+  // Wait until sensor goes LOW before allowing next trigger
+  while (digitalRead(pirPin) == HIGH) {
+    delay(50);
+  }
+
+  delay(500);
+  Serial.println("Ready for next visitor.");
+}
+
+// ==========================
+// SETUP
+// ==========================
 void setup() {
-    Serial.begin(115200);
+  Serial.begin(9600);
+  mySerial.begin(9600);
 
-    pinMode(PIN_NORTH_STAR_LED, OUTPUT);
-    pinMode(PIN_LANTERN_LED, OUTPUT);
-    pinMode(PIN_PIR_SENSOR, INPUT);
+  pinMode(pirPin, INPUT);
+  pinMode(lanternPin, OUTPUT);
+  pinMode(starPin, OUTPUT);
 
-    // Servo attach (order recovered from setup() init table)
-    headServo.attach(PIN_HEAD_TURN);
-    armServo.attach(PIN_SYRINGE_ARM);
-    lanternArmServo.attach(PIN_LANTERN_ARM);
+  // Both lights off at startup
+  digitalWrite(lanternPin, LOW);
+  digitalWrite(starPin, LOW);
 
-    mp3Serial.begin(9600);
+  // Set positions BEFORE attach to prevent startup jump
+  headServo.write(headAway);
+  headServo.attach(9);
 
-    // --- Calibration: drive all servos to home, tell viewer to step away ---
-    headServo.write(90);      // head home
-    armServo.write(0);        // arm/syringe home
-    lanternArmServo.write(70); // lantern resting near body
+  leftArmServo.write(leftDown);
+  leftArmServo.attach(11);
+
+  hydraulicServo.write(hydroRest);
+  hydraulicServo.attach(6);
+
+  // Give DFPlayer time to wake up
+  delay(1000);
+
+  Serial.println("Starting DFPlayer...");
+  if (myDFPlayer.begin(mySerial)) {
+    audioReady = true;
+    myDFPlayer.volume(volumeLevel);
+    Serial.println("DFPlayer ready.");
+  } else {
+    audioReady = false;
+    Serial.println("WARNING: DFPlayer not found. Lights and movement will still work.");
+  }
+
+  // PIR calibration — 60 seconds
+  Serial.println("============================");
+  Serial.println("CALIBRATING... LEAVE THE ROOM!");
+  Serial.println("============================");
+
+  for (int i = 60; i > 0; i--) {
+    Serial.print(i);
+    Serial.println(" seconds...");
     delay(1000);
-    Serial.println(F("CALIBRATING... LEAVE THE ROOM!"));
-    delay(1000);
+  }
 
-    // --- DFPlayer presence check (recovered fallback behavior) ---
-    dfPlayerReset();
-    delay(500);
-    // The chip polls for a response byte; if absent it flags not-ready.
-    dfPlayerReady = (mp3Serial.available() > 0);
-    if (dfPlayerReady) {
-        Serial.println(F("Starting DFPlayer..."));
-        dfPlayerVolume(20);
-        Serial.println(F("DFPlayer ready."));
-    } else {
-        Serial.println(F("WARNING: DFPlayer not found. Lights and movement will still work."));
-    }
-
-    Serial.println(F("SYSTEM READY. WALK UP TO THE SENSOR."));
+  Serial.println("SYSTEM READY. WALK UP TO THE SENSOR.");
 }
 
-// ----------------------------------------------------------------------------
-// loop() — blocking, linear sequence (matches the on-chip machine code)
-// ----------------------------------------------------------------------------
+// ==========================
+// LOOP
+// ==========================
 void loop() {
-    // Wait for PIR to go HIGH (polled in a tight loop)
-    while (digitalRead(PIN_PIR_SENSOR) == LOW) {
-        // idle
-    }
+  int motion = digitalRead(pirPin);
 
-    Serial.println(F("MOTION DETECTED! Starting sequence..."));
+  if (motion == HIGH && canTrigger == true) {
+    canTrigger = false;
+    runSequence();
+  }
 
-    // --- Lights + head turn ---
-    digitalWrite(PIN_LANTERN_LED, HIGH);
-    Serial.println(F("Head turning..."));
-    headServo.write(85);     // turn head toward viewer
-    lanternArmServo.write(70);
-    delay(572);
-
-    // --- Hydraulic arm / syringe gesture ---
-    Serial.println(F("Hydraulic arm moving..."));
-    armServo.write(90);      // drive syringe linkage
-    digitalWrite(PIN_NORTH_STAR_LED, HIGH);
-    delay(1000);
-
-    // --- Lantern arm raise ---
-    Serial.println(F("Raising lantern..."));
-    lanternArmServo.write(70);
-    delay(200);
-
-    // --- Audio ---
-    if (dfPlayerReady) {
-        Serial.println(F("Playing audio..."));
-        dfPlayerPlayMp3(1); // /mp3/0001_harriet.mp3
-    } else {
-        Serial.println(F("DFPlayer not ready. Running without audio."));
-    }
-    delay(200);
-
-    // --- Outro: head back, return arm, lights off ---
-    Serial.println(F("Outro starting..."));
-    headServo.write(120);    // orient back toward backdrop
-    armServo.write(0);       // return syringe to rest
-    delay(200);
-
-    Serial.println(F("Returning hydraulic servo to rest..."));
-    armServo.write(0);
-    digitalWrite(PIN_NORTH_STAR_LED, LOW);
-    digitalWrite(PIN_LANTERN_LED, LOW);
-    delay(200);
-
-    Serial.println(F("Sequence complete. North Star staying ON until next visitor."));
-    // North Star LED intentionally left controlled; arm/head return home
-    headServo.write(90);
-
-    Serial.println(F("Ready for next visitor."));
-    delay(1000); // cooldown before re-arming the PIR poll
+  if (motion == LOW) {
+    canTrigger = true;
+  }
 }

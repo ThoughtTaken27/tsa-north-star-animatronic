@@ -17,8 +17,8 @@
 #include "src/StateEngine.h"
 
 // --- Pin Allocations (See hardware/bom.md) ---
-const uint8_t PIN_AUDIO_TX        = 2;   // Arduino TX -> DFPlayer RX through 680Ω/1kΩ divider
-const uint8_t PIN_AUDIO_RX        = 3;   // Arduino RX <- DFPlayer TX
+const uint8_t PIN_AUDIO_TX        = 3;   // Arduino TX -> DFPlayer RX through 680Ω/1kΩ divider
+const uint8_t PIN_AUDIO_RX        = 2;   // Arduino RX <- DFPlayer TX
 const uint8_t PIN_NORTH_STAR_LED  = 4;   // Orange/amber North Star LED through 220Ω
 const uint8_t PIN_LANTERN_LED     = 5;   // Warm white lantern LED through 220Ω
 const uint8_t PIN_SYRINGE_ARM     = 6;   // MG996R driving right-side syringe linkage

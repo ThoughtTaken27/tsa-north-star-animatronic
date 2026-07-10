@@ -37,13 +37,23 @@ Judge feedback: "Met the prompt very well." The exhibit was self-contained (batt
 
 1. The Arduino waits through a 60-second PIR warm-up window after power-on.
 2. Motion on the PIR sensor starts the sequence.
-3. The DFPlayer plays `/mp3/0001.mp3`.
-4. The lantern LED turns on and the head servo turns toward the viewer.
-5. The syringe-drive servo moves the right arm linkage.
-6. The North Star LED turns on during the pointing gesture.
-7. The servos return home, audio stops, and the system enters a short cooldown.
+3. Both LEDs briefly turn off (visual reset), then the lantern LED turns on.
+4. The head servo turns toward the viewer.
+5. The DFPlayer plays `/mp3/0001.mp3` and a millisecond clock starts.
+6. The left arm raises the lantern.
+7. At exactly 18 seconds after audio started, the syringe-drive servo moves the right arm linkage.
+8. The North Star LED turns on during the pointing gesture.
+9. Five seconds before the audio ends, the outro begins: left arm lowers, head turns away, lantern turns off.
+10. The hydraulic servo returns to rest.
+11. The North Star LED stays on as a beacon between rounds.
+12. The system waits for the PIR sensor to go LOW, then re-arms for the next visitor.
 
-The firmware avoids blocking timing during the show loop. Servo movement, LEDs, sensor checks, and state transitions are coordinated with `millis()` through a finite state machine.
+The repository contains two firmware versions:
+
+- **`tsa-north-star-animatronic.ino`** — A modular, non-blocking `millis()`-based FSM rewrite created after the competition for portfolio clarity. This version uses separate source files under `src/` for the state machine, actuators, sensors, and audio controller.
+- **`board_firmware_recovered.ino`** — The actual blocking code that ran on the competition Arduino. This version uses `delay()`-based sequencing, the DFRobotDFPlayerMini library, and a `millis()`-clocked hydraulic arm that waits a precise number of seconds after audio starts before moving. The North Star LED stays on between rounds as a beacon.
+
+Both versions share the same pin map, servo angles, and DFPlayer fallback behavior.
 
 ## System Design
 

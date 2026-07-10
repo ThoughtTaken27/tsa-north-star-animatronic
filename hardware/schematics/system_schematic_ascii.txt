@@ -94,8 +94,8 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   +--------------------------------------------------------------------------+
   |                              ARDUINO UNO                                 |
   |                                                                          |
-  |  D2  SoftwareSerial TX  ---> DFPlayer RX through 680R/1k divider        |
-  |  D3  SoftwareSerial RX  <--- DFPlayer TX direct                          |
+  |  D2  SoftwareSerial RX  <--- DFPlayer TX direct                          |
+  |  D3  SoftwareSerial TX  ---> DFPlayer RX through 680R/1k divider        |
   |  D4  Digital output    ---> North Star LED (orange) through 220R         |
   |  D5  Digital output    ---> Lantern LED (warm white) through 220R         |
   |  D6  Servo signal      ---> MG996R syringe-drive servo (on base)         |
@@ -112,10 +112,10 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
 
   DFPlayer VCC  ---> Arduino 5V
   DFPlayer GND  ---> Common ground
-  DFPlayer TX   ---> Arduino D3 (direct)
-  DFPlayer RX   ---> Voltage divider from Arduino D2:
+  DFPlayer TX   ---> Arduino D2 (direct)
+  DFPlayer RX   ---> Voltage divider from Arduino D3:
 
-      Arduino D2 ---- 680 ohm ----+---- DFPlayer RX
+      Arduino D3 ---- 680 ohm ----+---- DFPlayer RX
                                   |
                                  1k ohm
                                   |

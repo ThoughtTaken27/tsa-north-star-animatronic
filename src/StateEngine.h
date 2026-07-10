@@ -18,10 +18,10 @@ enum SystemState {
 
 // --- Sequence timing constants (all in milliseconds) ---
 static const uint32_t PIR_WARMUP_MS        = 60000;  // HC-SR501 stabilization on power-on
-static const uint32_t NARRATION_DURATION   = 75000;  // Total narration target length
+static const uint32_t NARRATION_DURATION   = 33000;  // Total narration target length (33 seconds)
 static const uint32_t SPEAKING_PHASE_1_MS   = 12000;  // Slow head scan toward viewer
 static const uint32_t SPEAKING_PHASE_2_MS   = 22000;  // Head scan away
-static const uint32_t GESTURE_TRIGGER_MS    = 30000;  // When to raise arm + light North Star
+static const uint32_t GESTURE_TRIGGER_MS    = 18000;  // When to raise arm + light North Star (18s after audio)
 static const uint32_t GESTURE_HEAD_TURN_MS   = 52000;  // Head reorientation during gesture
 static const uint32_t REST_COOLDOWN_MS       = 10000;  // Prevent rapid re-trigger
 
