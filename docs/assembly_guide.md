@@ -32,11 +32,13 @@ Setup notes:
 
 Never drive hobby servos to full `0` to `180` degree travel in the final build. Start from conservative software limits and widen only after checking that the physical mechanism does not bind.
 
-| Assembly | Servo | Pin | Home | Approx. Active Range | Purpose |
-| :--- | :--- | :---: | :---: | :---: | :--- |
-| Head turn | MG996R | `D9` | 90 deg | 55-125 deg | Turns figure toward viewer/backdrop |
-| Syringe drive | MG996R | `D6` | 45 deg | 40-130 deg | Moves the right arm linkage |
-| Lantern arm | SG90 | `D11` | 70 deg | 60-125 deg | Raises lantern arm |
+| Assembly | Servo | Pin | Home (Modular FSM) | Home (Competition) | Approx. Active Range | Purpose |
+| :--- | :--- | :---: | :---: | :---: | :---: | :--- |
+| Head turn | MG996R | `D9` | 90 deg | 90 deg (rest), 60 deg (forward) | 55-125 deg | Turns figure toward viewer/backdrop |
+| Syringe drive | MG996R | `D6` | 45 deg | 70 deg (rest), 18 deg (push) | 40-130 deg | Moves the right arm linkage |
+| Lantern arm | SG90 | `D11` | 70 deg | 0 deg (down), 90 deg (up) | 60-125 deg | Raises lantern arm |
+
+Note: The "Modular FSM" home values are the safe-angle limits used by `tsa-north-star-animatronic.ino`. The "Competition" values are the actual angles used in `firmware/board_firmware_recovered.ino` — the code that ran at the state championship.
 
 Calibration protocol:
 

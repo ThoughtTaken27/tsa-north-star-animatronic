@@ -18,6 +18,7 @@ This file records the supported hardware configuration for the Arduino-controlle
 | DFPlayer divider resistors | 680 ohm and 1k ohm resistors from Chanzon resistor kit | 1 each | Drops Arduino TX to DFPlayer RX-safe logic level |
 | Capacitor | FymuSing 1000 uF 25V aluminum electrolytic capacitor pack | 1 used, spares retained | Buffers servo rail voltage dips |
 | Syringe | 60 mL plastic liquid syringe with tip cap | 1 visible in final build, spares retained | Right-side arm linkage |
+| Vinyl tubing | 3/16 in inner diameter clear vinyl tubing, 10 ft | 1 used | Hydraulic fluid transfer between syringes |
 | Syringe linkage materials | Wood linkage, tape, zip ties, and mounting hardware | As needed | Transfers servo motion into the syringe plunger |
 | Jumper wires | 120-piece multicolored Dupont jumper wire kit | As needed | Breadboard wiring |
 | Cable ties | 4 in black nylon cable ties | As needed | Wire and frame management |

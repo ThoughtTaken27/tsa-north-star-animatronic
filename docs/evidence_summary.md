@@ -29,6 +29,7 @@ Amazon purchase screenshots dated March 7, 2026 verify:
 - Chanzon warm white 5 mm LEDs.
 - Chanzon 60-value 1/4 W resistor kit.
 - 60 mL plastic liquid syringes.
+- 3/16 in inner diameter clear vinyl tubing (10 ft).
 - Dupont jumper wires.
 - 4xAA switched battery holder.
 - 9V battery clip to barrel plug adapter.

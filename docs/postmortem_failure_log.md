@@ -66,10 +66,11 @@ This postmortem records the failures that actually shaped the final build: power
 
 **Fix:**
 
-- Used a 680 ohm / 1k ohm voltage divider on Arduino `D2` to DFPlayer RX.
+- Used a 680 ohm / 1k ohm voltage divider on Arduino `D3` (TX) to DFPlayer RX to step the 5V Arduino signal down to a safe level for the DFPlayer's 3.3V input.
 - Formatted the microSD card as FAT32.
 - Put the narration in `/mp3/0001.mp3`.
-- Ran `dot_clean` on the mounted SD card volume before ejecting from macOS to remove hidden `._` resource fork files that crash the DFPlayer.
+- Reseated the micro SD card fully into the DFPlayer slot (it was not fully inserted, causing intermittent connection failures under vibration from servo movement).
+- Improved breadboard contact quality by pressing the DFPlayer module and all connecting wires firmly into the breadboard.
 - Updated the firmware to use the DFPlayer command for numbered files in the `/mp3` folder.
 
 ## 6. Competition-Day Backdrop Recovery

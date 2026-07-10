@@ -160,7 +160,8 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   - V+     ---> 4xAA servo rail +
   - GND    ---> Common ground
   - Drives foam head through 1/4" vertical dowel
-  - Software limits: 55-125 degrees (home = 90)
+  - Modular FSM software limits: 55-125 degrees (home = 90)
+  - Competition firmware: headAway = 90, headForward = 60
 
   MG996R SYRINGE-DRIVE SERVO (mounted on plywood base):
   - Signal ---> Arduino D6
@@ -168,7 +169,8 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   - GND    ---> Common ground
   - Drives 60mL syringe through wooden popstick linkage
   - Syringe is horizontal, zip-tied to right PVC + wood dowel
-  - Software limits: 40-130 degrees (home = 45)
+  - Modular FSM software limits: 40-130 degrees (home = 45)
+  - Competition firmware: hydroRest = 70, hydroPush = 18
 
   SG90 LANTERN ARM SERVO (mounted on left PVC shoulder):
   - Signal ---> Arduino D11
@@ -176,7 +178,8 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   - GND    ---> Common ground
   - Blue-bodied micro servo with white horn
   - Drives wood-stick lantern frame with warm white LED
-  - Software limits: 60-125 degrees (home = 70)
+  - Modular FSM software limits: 60-125 degrees (home = 70)
+  - Competition firmware: leftDown = 0, leftUp = 90
 
 
 7. PHYSICAL FRAME SUMMARY

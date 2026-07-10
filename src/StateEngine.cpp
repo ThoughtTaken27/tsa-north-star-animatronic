@@ -79,7 +79,7 @@ void StateEngine::handleIdle() {
 void StateEngine::handleTriggered() {
     // Check DFPlayer presence (matches competition firmware fallback behavior)
     if (audio.isReady()) {
-        audio.playMp3Track(1); // /mp3/0001_harriet.mp3
+        audio.playMp3Track(1); // /mp3/0001.mp3
     } else {
         // DFPlayer not detected: run lights and motion without audio
         Serial.println(F("WARNING: DFPlayer not found. Lights and movement will still work."));
