@@ -10,7 +10,7 @@ This file records the supported hardware configuration for the Arduino-controlle
 | MG996R servo | Deegoo-FPV 2-pack MG996R 55 g metal gear digital servo | 2 | Head turn and right-side syringe linkage |
 | SG90 servo | Dorhea 5-pack SG90 9 g micro servo kit | 1 used, spares retained | Lantern arm movement and backup parts |
 | DFPlayer Mini | DFPlayer Mini MP3 player module | 1 used, spare retained | Narration playback |
-| microSD card | Patriot LX 16 GB microSD card with adapter, UHS-I C10 A1 | 1 used | Audio storage |
+| microSD card | 8 GB TF/microSD cards with adapters, UHS-I C10 A1 | 1 used, spare retained | Audio storage |
 | Speaker | 3 W, 8 ohm mini loudspeaker with JST-PH2.0 lead | 1 | Audio output |
 | HC-SR501 PIR sensor | HiLetgo HC-SR501 PIR infrared motion sensor module pack | 1 used, spares retained | Viewer trigger |
 | LEDs | Chanzon 5 mm warm white LEDs plus a separate North Star LED from project build materials | 2+ | Lantern and North Star lighting |
