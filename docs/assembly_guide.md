@@ -38,7 +38,7 @@ Never drive hobby servos to full `0` to `180` degree travel in the final build. 
 | Syringe drive | MG996R | `D6` | 45 deg | 70 deg (rest), 18 deg (push) | 40-130 deg | Moves the right arm linkage |
 | Lantern arm | SG90 | `D11` | 70 deg | 0 deg (down), 90 deg (up) | 60-125 deg | Raises lantern arm |
 
-Note: The "Modular FSM" home values are the safe-angle limits used by `tsa-north-star-animatronic.ino`. The "Competition" values are the actual angles used in `firmware/board_firmware_recovered.ino` — the code that ran at the state championship.
+Note: The "Modular FSM" home values are the safe-angle limits used by `tsa-north-star-animatronic.ino`. The "Competition" values are the actual angles used in `firmware/firmware.ino` — the code that ran at the state championship.
 
 Calibration protocol:
 

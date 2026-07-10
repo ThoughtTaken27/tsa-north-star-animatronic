@@ -30,7 +30,7 @@ jobs:
 
       - name: Compile Competition Firmware
         run: |
-          arduino-cli compile --fqbn arduino:avr:uno firmware/board_firmware_recovered.ino
+          arduino-cli compile --fqbn arduino:avr:uno firmware/firmware.ino
 
   verify:
     runs-on: ubuntu-latest

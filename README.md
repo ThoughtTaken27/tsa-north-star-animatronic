@@ -51,7 +51,7 @@ Judge feedback: "Met the prompt very well." The exhibit was self-contained (batt
 The repository contains two firmware versions:
 
 - **`tsa-north-star-animatronic.ino`** — A modular, non-blocking `millis()`-based FSM rewrite created after the competition for portfolio clarity. This version uses separate source files under `src/` for the state machine, actuators, sensors, and audio controller.
-- **`firmware/board_firmware_recovered.ino`** — The actual blocking code that ran on the competition Arduino. This version uses `delay()`-based sequencing, the DFRobotDFPlayerMini library, and a `millis()`-clocked hydraulic arm that waits a precise number of seconds after audio starts before moving. The North Star LED stays on between rounds as a beacon.
+- **`firmware/firmware.ino`** — The actual blocking code that ran on the competition Arduino. This version uses `delay()`-based sequencing, the DFRobotDFPlayerMini library, and a `millis()`-clocked hydraulic arm that waits a precise number of seconds after audio starts before moving. The North Star LED stays on between rounds as a beacon.
 
 Both versions share the same pin map, servo angles, and DFPlayer fallback behavior.
 
@@ -88,7 +88,7 @@ flowchart LR
 ## Repository Map
 
 - [`tsa-north-star-animatronic.ino`](./tsa-north-star-animatronic.ino) - Arduino entry point and pin assignments (modular, non-blocking FSM version).
-- [`firmware/board_firmware_recovered.ino`](./firmware/board_firmware_recovered.ino) - Hand-reconstruction of the firmware read back off the competition Arduino. Blocking, linear-sequence version with human-readable narration. See header note for recovery method.
+- [`firmware/firmware.ino`](./firmware/firmware.ino) - Hand-reconstruction of the firmware read back off the competition Arduino. Blocking, linear-sequence version with human-readable narration. See header note for recovery method.
 - [`src/StateEngine.cpp`](./src/StateEngine.cpp) - Non-blocking sequence state machine.
 - [`src/Actuators.cpp`](./src/Actuators.cpp) - Ramped servo wrapper with safe angle limits.
 - [`src/Sensors.cpp`](./src/Sensors.cpp) - PIR debounce handling.

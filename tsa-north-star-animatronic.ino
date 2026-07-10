@@ -12,7 +12,7 @@
  * code but has intentionally different servo angles, timing, and motion
  * profiles (e.g. multi-phase head scanning, ramped servo movement).
  * The authoritative competition firmware that actually ran at the
- * Tennessee TSA State Championship is in firmware/board_firmware_recovered.ino.
+ * Tennessee TSA State Championship is in firmware/firmware.ino.
  * 
  * Author: Parth Khavate (Systems Integrator / Team Captain)
  * State Competition: April 2026 — 1st Place Tennessee State Championship

@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - **Build photos**: added 4 verified build photos to `docs/assets/` — `exhibit.jpg` (completed exhibit with fabric shell), `wiring.jpg` (electronics layout on white-painted base), `syringe_linkage.jpg` (MG996R servo driving 60 mL syringe through wooden dowel linkage), and `reveal.jpg` (exposed PVC skeleton with both arms and syringes). Updated README with an image table and publishing guide with asset status. A short full-sequence demo clip (`demo_hook.gif`) is still needed.
+- **Firmware file renamed**: `firmware/board_firmware_recovered.ino` → `firmware/firmware.ino` to satisfy the Arduino CLI sketch naming convention (`.ino` file must match parent folder name). Updated all references in README, `tsa-north-star-animatronic.ino`, `docs/assembly_guide.md`, `scripts/verify_files.py`, and the CI workflow. This fixes the "Compile Arduino Firmware" CI badge failure.
 
 ## [v1.2] - 2026-07-10
 
