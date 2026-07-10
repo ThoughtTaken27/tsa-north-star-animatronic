@@ -4,7 +4,7 @@ This document describes the supported mechanical build: a PVC-and-wood skeleton 
 
 ## Base and Skeleton
 
-- **Base:** Plywood platform holding the Arduino/breadboard control stack, DFPlayer, PIR sensor, speaker, 9V battery, and switched 4xAA servo battery pack.
+- **Base:** 12 x 12 in plywood platform, painted white, elevated on four short wooden dowel feet. Holds the Arduino/breadboard control stack, DFPlayer, PIR sensor, speaker, 9V battery, and switched 4xAA servo battery pack.
 - **Spine:** A vertical 1/2 in PVC support rises from the base and carries the upper body.
 - **Shoulders:** A PVC tee and horizontal shoulder pipe form the upper frame.
 - **Head:** A painted foam head sits on a vertical dowel driven by the head servo at the top of the PVC frame.
@@ -21,7 +21,7 @@ An MG996R servo mounted near the top of the PVC frame turns the foam head throug
 The right-side gesture arm is driven by a visible syringe linkage:
 
 - A large 60 mL syringe is mounted horizontally on top of the base, on the right side of the frame.
-- An MG996R servo on top of the base drives the syringe through a short wooden linkage.
+- An MG996R servo on top of the base drives the syringe through a short wooden dowel linkage.
 - The syringe linkage connects to the right-side arm mechanism.
 - The arm pivots on a plain metal pin through a drilled hole at the shoulder. The hole is slightly larger than the pin diameter so the arm swings freely without binding, while remaining constrained to a single axis of rotation. No powered servo is used at the hinge.
 - Linkage alignment matters more than force. If the plunger or arm is pushed sideways, it binds and wastes servo torque.

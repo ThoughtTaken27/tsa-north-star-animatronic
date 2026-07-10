@@ -19,12 +19,12 @@ This file records the supported hardware configuration for the Arduino-controlle
 | Capacitor | FymuSing 1000 uF 25V aluminum electrolytic capacitor pack | 1 used, spares retained | Buffers servo rail voltage dips |
 | Syringe | 60 mL plastic liquid syringe with tip cap | 1 visible in final build, spares retained | Right-side arm linkage |
 | Vinyl tubing | 3/16 in inner diameter clear vinyl tubing, 10 ft | 1 used | Hydraulic fluid transfer between syringes |
-| Syringe linkage materials | Wood linkage, tape, zip ties, and mounting hardware | As needed | Transfers servo motion into the syringe plunger |
+| Syringe linkage materials | Wooden dowel linkage, tape, zip ties, and mounting hardware | As needed | Transfers servo motion into the syringe plunger |
 | Jumper wires | 120-piece multicolored Dupont jumper wire kit | As needed | Breadboard wiring |
 | Cable ties | 4 in black nylon cable ties | As needed | Wire and frame management |
 | Servo power | LampVPath 4xAA battery holder with switch | 1 | Separate 6V nominal servo rail |
 | Logic power | 9V battery clip to 2.1 mm x 5.5 mm barrel plug adapter | 1 | Arduino input power |
-| Frame materials | 1/2 in PVC pipe/fittings, foam ball, wood sticks/dowels, craft/fabric items | As needed | Exhibit body and removable shell |
+| Frame materials | 1/2 in PVC pipe/fittings, foam ball, wood sticks/dowels, craft/fabric items, white paint for base | As needed | Exhibit body and removable shell |
 
 ## Documented Cost Summary
 

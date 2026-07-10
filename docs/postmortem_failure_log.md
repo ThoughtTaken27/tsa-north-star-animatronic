@@ -34,12 +34,12 @@ This postmortem records the failures that actually shaped the final build: power
 
 **Symptom:** The right-side syringe arm stalled, moved weakly, or pushed sideways instead of producing a clean gesture.
 
-**Cause:** The syringe plunger and wooden linkage were sensitive to angle. When the servo horn pushed off-axis, the mechanism wasted torque and the plunger resisted motion. Additionally, the syringe's factory coating caused stiction after extended use, making the plunger harder to push smoothly. Finally, the servo could be commanded past the mechanism's physical end stop, causing grinding and wasting torque without moving the arm.
+**Cause:** The syringe plunger and wooden dowel linkage were sensitive to angle. When the servo horn pushed off-axis, the mechanism wasted torque and the plunger resisted motion. Additionally, the syringe's factory coating caused stiction after extended use, making the plunger harder to push smoothly. Finally, the servo could be commanded past the mechanism's physical end stop, causing grinding and wasting torque without moving the arm.
 
 **Fix:**
 
 - Repositioned the syringe body and support point.
-- Adjusted the MG996R servo horn and short wooden linkage.
+- Adjusted the MG996R servo horn and short wooden dowel linkage.
 - Added enough pivot freedom for the arm to move through its arc without forcing the syringe sideways.
 - Reduced software travel limits so the servo stayed inside the reliable mechanical range.
 - Replaced syringes when the factory coating wore off and plunger stiction increased.

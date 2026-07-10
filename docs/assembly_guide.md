@@ -18,13 +18,13 @@ This guide covers the practical build sequence for the final exhibit configurati
 The right arm uses a 60 mL syringe driven by an MG996R servo linkage:
 
 ```text
- [MG996R servo] -> [wood linkage] -> [60 mL syringe] -> [right arm linkage]
+ [MG996R servo] -> [wooden dowel linkage] -> [60 mL syringe] -> [right arm linkage]
 ```
 
 Setup notes:
 
 1. Mount the syringe body firmly so it cannot twist when the servo pushes.
-2. Align the servo horn and wooden linkage so the syringe plunger is pushed straight along its axis.
+2. Align the servo horn and wooden dowel linkage so the syringe plunger is pushed straight along its axis.
 3. Add pivot freedom where needed so the arm can move through its arc without forcing the syringe sideways.
 4. Test repeatedly before adding clothing, because the fabric can hide binding and linkage problems.
 

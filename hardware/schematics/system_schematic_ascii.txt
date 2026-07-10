@@ -33,7 +33,7 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   (D5)                              on plywood base
                                     (D6) -- drives
                                      syringe via
-                                     wood linkage
+                                     wood dowel linkage
   .------------------------------------------------.
   |            PLYWOOD BASE (12" x 12")             |
   |                                                 |
@@ -167,7 +167,7 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   - Signal ---> Arduino D6
   - V+     ---> 4xAA servo rail +
   - GND    ---> Common ground
-  - Drives 60mL syringe through wooden popstick linkage
+  - Drives 60mL syringe through wooden dowel linkage
   - Syringe is horizontal, on top of base, zip-tied to right PVC + wood dowel
   - Modular FSM software limits: 40-130 degrees (home = 45)
   - Competition firmware: hydroRest = 70, hydroPush = 18
@@ -185,7 +185,7 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
 7. PHYSICAL FRAME SUMMARY
 --------------------------------------------------------------------------------
 
-  - Base:       12" x 12" x 3/4" plywood with wooden dowel feet
+  - Base:       12" x 12" x 3/4" plywood, painted white, with 4 wooden dowel feet
   - Spine:      1/2" PVC pipe, ~14" tall, in floor flange screwed to base
   - Shoulders:  PVC T-junction at spine top, 4" PVC pipes to elbows
   - Head:       6" foam ball, painted burnt sienna, on 1/4" dowel
