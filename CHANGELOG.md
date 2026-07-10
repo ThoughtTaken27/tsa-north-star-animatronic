@@ -4,6 +4,22 @@ All notable changes to "The North Star" animatronic repository are documented in
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [v1.2] - 2026-07-10
+
+### Fixed
+
+- **Critical: board_firmware_recovered.ino replaced with actual competition code.** The previous version claimed to be a flash-dump reconstruction but was inaccurate — it used raw DFPlayer packets instead of the DFRobotDFPlayerMini library, had wrong servo angles (head 85/120 vs 60/90, arm 90 vs 18), lacked the millis()-clocked hydraulic delay, and did not implement the North Star beacon behavior. The new version is the blocking firmware that actually ran at competition.
+- **Critical: DFPlayer D2/D3 pin labels were swapped** in `hardware/bom.md`, `hardware/schematics/system_schematic_ascii.txt`, and `tsa-north-star-animatronic.ino`. The code uses `SoftwareSerial(2, 3)` which means RX=2, TX=3. D2 is Arduino RX (from DFPlayer TX direct), D3 is Arduino TX (to DFPlayer RX through divider). All three files now match the actual wiring.
+- Corrected PIR sensitivity potentiometer direction in `docs/postmortem_failure_log.md`: fully counter-clockwise (not clockwise) for maximum sensitivity on the HiLetgo HC-SR501 revision used.
+- Corrected microSD card in BOM from "8 GB" to Patriot LX 16 GB.
+- Corrected `NARRATION_DURATION` in `src/StateEngine.h` from 75000ms to 33000ms (33 seconds, matching the actual narration file).
+- Corrected `GESTURE_TRIGGER_MS` in `src/StateEngine.h` from 30000ms to 18000ms (18 seconds after audio start, matching the actual competition timing).
+
+### Added
+
+- README firmware version comparison section documenting the difference between the modular FSM rewrite (`tsa-north-star-animatronic.ino`) and the actual blocking competition code (`board_firmware_recovered.ino`).
+- Updated README behavior description to match the actual competition sequence: North Star beacon between rounds, 18-second hydraulic delay, lights-reset at trigger, outro sequence.
+
 ## [v1.1] - 2026-07-04
 
 ### Fixed
