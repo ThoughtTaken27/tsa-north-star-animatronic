@@ -24,9 +24,13 @@ jobs:
           arduino-cli lib install Servo
           arduino-cli lib install DFRobotDFPlayerMini
 
-      - name: Compile Sketch
+      - name: Compile Modular Sketch
         run: |
           arduino-cli compile --fqbn arduino:avr:uno tsa-north-star-animatronic.ino
+
+      - name: Compile Competition Firmware
+        run: |
+          arduino-cli compile --fqbn arduino:avr:uno firmware/board_firmware_recovered.ino
 
   verify:
     runs-on: ubuntu-latest

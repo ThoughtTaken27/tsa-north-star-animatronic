@@ -127,7 +127,7 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   DFPlayer SPK2 ---> Speaker wire 2
 
   microSD card:
-  - FAT32 format (card must be 32GB or smaller)
+  - FAT32 format
   - folder: /mp3
   - file: /mp3/0001.mp3
   - 44.1kHz MP3 recommended
@@ -163,12 +163,12 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   - Modular FSM software limits: 55-125 degrees (home = 90)
   - Competition firmware: headAway = 90, headForward = 60
 
-  MG996R SYRINGE-DRIVE SERVO (mounted on plywood base):
+  MG996R SYRINGE-DRIVE SERVO (mounted on top of plywood base):
   - Signal ---> Arduino D6
   - V+     ---> 4xAA servo rail +
   - GND    ---> Common ground
   - Drives 60mL syringe through wooden popstick linkage
-  - Syringe is horizontal, zip-tied to right PVC + wood dowel
+  - Syringe is horizontal, on top of base, zip-tied to right PVC + wood dowel
   - Modular FSM software limits: 40-130 degrees (home = 45)
   - Competition firmware: hydroRest = 70, hydroPush = 18
 

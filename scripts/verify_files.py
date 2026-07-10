@@ -24,6 +24,7 @@ required_files = [
     "CHANGELOG.md",
     "CONTRIBUTING.md",
     "tsa-north-star-animatronic.ino",
+    "firmware/board_firmware_recovered.ino",
     "src/Sensors.h",
     "src/Sensors.cpp",
     "src/Actuators.h",

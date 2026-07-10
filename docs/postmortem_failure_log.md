@@ -34,7 +34,7 @@ This postmortem records the failures that actually shaped the final build: power
 
 **Symptom:** The right-side syringe arm stalled, moved weakly, or pushed sideways instead of producing a clean gesture.
 
-**Cause:** The syringe plunger and wooden linkage were sensitive to angle. When the servo horn pushed off-axis, the mechanism wasted torque and the plunger resisted motion.
+**Cause:** The syringe plunger and wooden linkage were sensitive to angle. When the servo horn pushed off-axis, the mechanism wasted torque and the plunger resisted motion. Additionally, the syringe's factory coating caused stiction after extended use, making the plunger harder to push smoothly. Finally, the servo could be commanded past the mechanism's physical end stop, causing grinding and wasting torque without moving the arm.
 
 **Fix:**
 
@@ -42,8 +42,22 @@ This postmortem records the failures that actually shaped the final build: power
 - Adjusted the MG996R servo horn and short wooden linkage.
 - Added enough pivot freedom for the arm to move through its arc without forcing the syringe sideways.
 - Reduced software travel limits so the servo stayed inside the reliable mechanical range.
+- Replaced syringes when the factory coating wore off and plunger stiction increased.
 
-## 4. Exposed Wiring Reliability
+## 4. Hydraulic Fluid System Issues
+
+**Symptom:** The right arm moved inconsistently — sometimes strong, sometimes weak or delayed for no visible mechanical reason.
+
+**Cause:** Air trapped inside the vinyl tubing acted as a spring, compressing under pressure and absorbing force before the upper syringe extended. The hydraulic system uses water because it is effectively incompressible (bulk modulus ~2.2 GPa), but any air bubble introduces compressibility and ruins the direct force transfer. Earlier in development, dish soap was added to the water as a lubricant — it stripped the factory coating off two syringes, making the plungers grippy and inconsistent.
+
+**Fix:**
+
+- Used only clean water — no soap or additives.
+- Filled the system by submerging the tubing and forcing water through both syringes until no air bubbles remained.
+- Bled air from the upper syringe before each run by cycling the plunger with the tubing end submerged.
+- Replaced the two soap-damaged syringes with new ones.
+
+## 5. Exposed Wiring Reliability
 
 **Symptom:** Wires and servo leads could shift during testing, transport, or the removable-shell reveal.
 
@@ -55,7 +69,7 @@ This postmortem records the failures that actually shaped the final build: power
 - Used zip ties to secure loose runs.
 - Kept the Arduino, breadboard, DFPlayer, speaker, batteries, and PIR sensor accessible for inspection and troubleshooting.
 
-## 5. DFPlayer Mini Wiring and SD Card Setup
+## 6. DFPlayer Mini Wiring and SD Card Setup
 
 **Symptom:** The DFPlayer failed to play narration during early tests.
 
@@ -73,7 +87,7 @@ This postmortem records the failures that actually shaped the final build: power
 - Improved breadboard contact quality by pressing the DFPlayer module and all connecting wires firmly into the breadboard.
 - Updated the firmware to use the DFPlayer command for numbered files in the `/mp3` folder.
 
-## 6. Competition-Day Backdrop Recovery
+## 7. Competition-Day Backdrop Recovery
 
 **Event:** During setup, the team realized the painted black star backdrop had been left in the nearby hotel room.
 
