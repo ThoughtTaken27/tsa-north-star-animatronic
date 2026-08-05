@@ -18,6 +18,8 @@
 | Presentation / Interview | 30 | 30 |
 | **Total** | **127** | **130** |
 
+**Debugging record:** 23 distinct traps logged across the build — 15 hardware/software faults diagnosed and fixed, 8 conceptual errors caught before they cost anything, and 2 competition-window incidents. Two cost hardware. Full breakdown in [`docs/postmortem_failure_log.md`](./docs/postmortem_failure_log.md).
+
 Judge feedback: "Met the prompt very well." The exhibit was self-contained (battery-powered, no laptop required) and judges specifically noted the clean internal circuitry during the shell reveal. See [`docs/evidence_summary.md`](./docs/evidence_summary.md) for the official rating form breakdown.
 
 ## System Summary

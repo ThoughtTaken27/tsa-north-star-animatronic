@@ -6,6 +6,22 @@ This postmortem records the failures that actually shaped the final build: power
 
 Where the build notes hedge, this log hedges too. Items marked as "likely" or "flagged as a risk" are recorded that way on purpose.
 
+## Scale of the Debugging Effort
+
+The build record for this project logs **23 distinct traps** — mistakes made, wrong turns taken, or bad assumptions caught before they did damage. They split into two kinds:
+
+| Category | Count | What it means |
+| :--- | ---: | :--- |
+| Hardware or software faults diagnosed and fixed | 15 | Something was actually broken or misbehaving and had to be tracked down |
+| Conceptual errors and bad advice caught before acting | 8 | Wrong assumptions corrected before they cost hardware or time |
+| Competition-window incidents | 2 | The audio module dying at the hotel the night before, and the backdrop left behind at setup |
+
+That is **17 things that broke and were fixed**, on top of 8 wrong ideas caught early. Two of those cost hardware: one PIR sensor, likely damaged while establishing an unlabeled pinout by trial and error, and two 60 mL syringes ruined by using dish soap as a plunger lubricant.
+
+The most expensive single subsystem was the DFPlayer Mini, which failed for four separate reasons at different times — a 5V logic signal into a 3.3V input, a micro SD card not fully seated, marginal breadboard contact, and strict file-naming requirements — plus a macOS toolchain failure that looked like a fifth. Section 6 and section 7 cover those.
+
+The 12 entries below consolidate those 23 traps into the failure modes that actually shaped the final build. Everything here was resolved before the competition.
+
 ## 1. Servo Power Resets
 
 **Symptom:** The Arduino would reset or behave unpredictably when multiple servos moved.
@@ -162,7 +178,7 @@ Where the build notes hedge, this log hedges too. Items marked as "likely" or "f
 
 Independently verifiable: the show timeline is built on `audioLengthSeconds = 33`, so the narration the firmware was tuned against is 33 seconds long.
 
-## 13. Competition-Day Backdrop Recovery
+## 12. Competition-Day Backdrop Recovery
 
 **Event:** During setup, the team realized the painted black star backdrop had been left in the nearby hotel room.
 

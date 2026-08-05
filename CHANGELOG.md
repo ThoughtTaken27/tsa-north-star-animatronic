@@ -39,6 +39,11 @@ Full line-by-line audit of the repository against the complete build record (the
 
 - Code contribution attribution in `docs/engineering_notebook.md` now states that the firmware was written with help from a friend, matching the build record, rather than implying it was written solo.
 
+### Added (second pass)
+
+- **Scale-of-effort summary** at the top of `docs/postmortem_failure_log.md` and in the README: 23 logged traps, split into 15 diagnosed faults, 8 conceptual errors caught early, and 2 competition-window incidents, with the two that cost hardware named.
+- Fixed a section numbering gap in the failure log (it skipped 12).
+
 ### Explicitly Not Claimed
 
 A short list of things the build record does not settle, kept here so future edits do not quietly harden them into facts:
