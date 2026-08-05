@@ -29,7 +29,7 @@ Judge feedback: "Met the prompt very well." The exhibit was self-contained (batt
 | Audio | DFPlayer Mini with microSD narration file |
 | Motion | MG996R head servo, MG996R syringe-drive servo, SG90 lantern arm servo |
 | Lighting | Warm white lantern LED, orange/amber North Star LED |
-| Arm Drive | 60 mL syringe linkage driven by an MG996R servo |
+| Arm Drive | Closed two-syringe water circuit: MG996R pushes a 60 mL drive syringe on the base, 3/16 in vinyl tubing carries the pressure to a second 60 mL syringe at the shoulder, which raises the pointing arm |
 | Power | 9V battery to Arduino barrel jack, switched 4xAA battery pack for servo rail, shared ground |
 | Reliability Fixes | Servo rail capacitor, DFPlayer voltage divider, PIR warm-up protocol, syringe-linkage corrections |
 
@@ -66,13 +66,15 @@ flowchart TD
     LanternServo["SG90 lantern arm servo (D11)"]
     Lantern["Wood-stick lantern arm + warm white LED"]
     SyringeServo["MG996R syringe-drive servo (D6)"]
-    Syringe["60 mL syringe linkage"]
-    RightArm["Right pointing arm"]
+    DriveSyringe["60 mL drive syringe (on base)"]
+    Tubing["3/16 in clear vinyl tubing"]
+    OutSyringe["60 mL output syringe (at shoulder)"]
+    RightArm["Right arm, pivots on a plain metal pin"]
 
     Base --> Spine
     Spine --> HeadServo --> Head
     Spine --> LanternServo --> Lantern
-    Base --> SyringeServo --> Syringe --> RightArm
+    Base --> SyringeServo --> DriveSyringe --> Tubing --> OutSyringe --> RightArm
 ```
 
 ```mermaid
@@ -88,7 +90,7 @@ flowchart LR
 ## Repository Map
 
 - [`tsa-north-star-animatronic.ino`](./tsa-north-star-animatronic.ino) - Arduino entry point and pin assignments (modular, non-blocking FSM version).
-- [`firmware/firmware.ino`](./firmware/firmware.ino) - Hand-reconstruction of the firmware read back off the competition Arduino. Blocking, linear-sequence version with human-readable narration. See header note for recovery method.
+- [`firmware/firmware.ino`](./firmware/firmware.ino) - The blocking, linear-sequence firmware that ran at the state championship, preserved verbatim from the final pre-competition development session on April 10, 2026. This is the source-of-record version, not a flash dump read back off the board.
 - [`src/StateEngine.cpp`](./src/StateEngine.cpp) - Non-blocking sequence state machine.
 - [`src/Actuators.cpp`](./src/Actuators.cpp) - Ramped servo wrapper with safe angle limits.
 - [`src/Sensors.cpp`](./src/Sensors.cpp) - PIR debounce handling.
@@ -115,13 +117,15 @@ flowchart LR
 7. Upload the sketch.
 8. Open Serial Monitor at `115200` baud for state transition logs.
 
+The competition firmware in [`firmware/firmware.ino`](./firmware/firmware.ino) logs at `9600` baud, not 115200, and additionally requires the `DFRobotDFPlayerMini` library.
+
 ## Media
 
 | Photo | What it shows |
 | :---: | :--- |
 | ![Exhibit](docs/assets/exhibit.jpg) | Completed exhibit with fabric shell, painted head, and name plaque. |
 | ![Wiring](docs/assets/wiring.jpg) | Electronics layout: Arduino Uno, breadboard, DFPlayer, speaker, PIR, and battery pack on the white-painted base. |
-| ![Syringe linkage](docs/assets/syringe_linkage.jpg) | MG996R servo driving the 60 mL syringe through a wooden dowel linkage. |
-| ![Reveal](docs/assets/reveal.jpg) | Internal PVC skeleton with both arms, syringes, and servos exposed for judge inspection. |
+| ![Syringe linkage](docs/assets/syringe_linkage.jpg) | MG996R servo driving the 60 mL drive syringe through a wooden dowel linkage, on the white-painted base. |
+| ![Reveal](docs/assets/reveal.jpg) | Internal PVC skeleton with both arms, both syringes, the tubing run, and all servos exposed for judge inspection. |
 
 A short full-sequence demo clip (`docs/assets/demo_hook.gif`) will be added when available.

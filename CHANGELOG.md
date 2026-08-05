@@ -4,6 +4,41 @@ All notable changes to "The North Star" animatronic repository are documented in
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [v1.4] - 2026-08-05
+
+Full line-by-line audit of the repository against the complete build record (the March 28 project-transfer document plus the April 8-13 build/debug session log) and against the four build photographs. Every claim in every file was checked. The corrections below are the ones that were wrong. Where the source notes hedge, the docs now hedge with them instead of hardening a maybe into a fact.
+
+### Fixed
+
+- **Fabricated hydraulic fill procedure removed.** `docs/postmortem_failure_log.md` said the system was filled "by submerging the tubing and forcing water through both syringes" and bled "with the tubing end submerged." There was never a fluid reservoir to submerge anything in. This was a known fabrication from an earlier AI-written draft of the project narrative and it had leaked into the repo. Replaced with the actual four-step procedure: fill one syringe, attach tubing to that syringe only, push until the open end drips, then attach the second empty syringe while the end is still wet.
+- **Stiction causality was backwards.** The postmortem said "the syringe's factory coating caused stiction after extended use." The opposite is true: the factory coating is what prevents stiction, and dish soap added to the water as a lubricant stripped it, ruining two syringes. Rewritten with the correct cause and the correct fix (clean water only, preserve the coating).
+- **PIR failure symptom was wrong.** The postmortem described the HC-SR501 problem as false triggering. The build record shows the opposite: the sensor did not usefully trigger at all for roughly two days. Rewritten with the real symptom and the three real causes (unlabeled pinout, reversed sensitivity potentiometer on this board revision, jumper on L instead of H).
+- **Damaged first sensor was omitted.** The postmortem credited "exhaustive testing" of pin combinations as the fix. Trying pin combinations is what took the first sensor out; the build notes record it as "likely damaged during wrong pin testing," and this entry keeps that hedge rather than upgrading it to a confirmed kill. The correct pinout came from the manufacturer's product image, and a fresh module from the 3-pack was swapped in.
+- **Right/left arm convention stated explicitly.** "Right arm" now means the arm on the viewer's right as they face the exhibit, which is the syringe-driven pointing arm. The docs previously used "right-side" without ever defining the reference frame, which made the mechanical description ambiguous. The plain metal pin shoulder pivot is confirmed correct and unchanged; the pre-competition notes had floated a gutted SG90 body as the dead hinge instead, which is not what was built, and `docs/evidence_summary.md` now says so.
+- **The second syringe was missing from the entire mechanical description.** `hardware/mechanical_assembly.md`, `docs/assembly_guide.md`, the schematic, the README system table, the README mermaid diagram, and `hardware/bom.md` ("1 visible in final build") all described a single syringe. Fluid power in this build is a closed two-syringe master/slave circuit — drive syringe on the base, tubing up the spine, output syringe at the shoulder — and the second syringe is visible in the reveal photo. This was the largest technical omission in the repository. Corrected everywhere, with a dedicated fluid-power section added to the schematic.
+- **Invented dimensions removed from the schematic.** `5/16" wood dowel`, `~14" spine`, `4" PVC shoulders`, `~4" neck post`, and `3/4" plywood` were never recorded anywhere in the build record. The publishing guide explicitly forbids claiming measurements the repo cannot defend, so they are gone. What remains is the ~12x12 in base, the 6 in foam ball, and the competition's 15" x 3' x 4' resting envelope.
+- **Firmware provenance claim corrected.** The README described `firmware/firmware.ino` as a "hand-reconstruction of the firmware read back off the competition Arduino." No flash read-back happened. The file is the final source from the April 10 development session, preserved verbatim, and is now described that way.
+- **Serial baud rate ambiguity.** The README build instructions said to open Serial Monitor at 115200. That is correct for the modular FSM sketch and wrong for the competition firmware, which runs at 9600 and additionally needs the `DFRobotDFPlayerMini` library. Both are now stated.
+- **v1.0-competition changelog entry corrected.** It listed the modular FSM firmware under the competition build's "Added" section, which contradicts that firmware's own header describing it as a post-competition rewrite.
+- **Lantern servo mounting corrected** in `docs/engineering_notebook.md`, `docs/assembly_guide.md`, and the schematic. It is zip-tied to the end of the horizontal shoulder crossbar, per the photos, not mounted "on the left shoulder" or glued into a PVC elbow.
+- **Servo rail voltage qualified.** The BOM and schematic stated a flat "6V servo rail." 6V is the alkaline nominal; the competition photo shows NiMH rechargeables installed, which is closer to 4.8V. Both are now noted so "6V" is not read as a measurement.
+- **Unverifiable PIR delay figure removed** ("shortest output pulse, approximately 3 seconds"). The direction of the potentiometer is recorded; the resulting pulse length was never measured.
+
+### Added
+
+- **Five previously undocumented build failures and decisions** in `docs/postmortem_failure_log.md`: the macOS Arduino IDE library/permissions failure (`DFRobotDFPlayerMini.h: No such file or directory`) that ate time from the audio-debugging budget while being a toolchain problem, recorded honestly as "resolved by several fixes applied together" because no single root cause was isolated; the power-up servo jump and the `write()`-before-`attach()` fix, which is visible in the shipped firmware's own comments; the decision to mount the fluid power assembly on top of the base after the under-base idea ran out of clearance; the jaw movement scope cut and the resulting unallocated D10; and the narration decision to reject a voice changer in favour of a plain unprocessed recording. The hot glue plus zip tie mounting method moved into `hardware/mechanical_assembly.md` as build practice rather than being written up as a failure event, since the notes record it as a rule that was followed, not a mount that tore off.
+- **Hydraulic servo angle history.** Push angles were found by testing, not calculation: 18 degrees verified good and shipped; a later trial at 15 was flagged as a grinding risk because it sits closer to the physical stop. Recorded in the postmortem, assembly guide, and schematic, along with the direction to move if grinding ever appeared (up, never down).
+- **The April 9 DFPlayer recurrence is documented.** It failed again at the hotel after travel and a re-recorded audio file, was worked through a four-step checklist, and was working for the competition the next day. Which step was the actual fix was never written down, so the repo names the checklist and does not name a root cause.
+- **DFPlayer graceful-degradation behavior** documented as a deliberate reliability decision rather than an incidental code branch.
+- **Dated build timeline** in `docs/engineering_notebook.md` anchored to receipts and the competition record.
+- **Photo-verified build details section** in `docs/evidence_summary.md`, listing what the four photographs independently confirm and flagging where they override the pre-competition planning notes.
+- **1849 and the age-27 depiction** in `docs/historical_context.md`, including why the familiar elderly-Tubman image was deliberately avoided and how that drove the voice recording decisions.
+- **Naming convention note** clarifying that the firmware's `leftArmServo` / `hydraulicServo` labels follow the team's build convention.
+
+### Changed
+
+- Code contribution attribution in `docs/engineering_notebook.md` now states that the firmware was written with help from a friend, matching the build record, rather than implying it was written solo.
+
 ## [v1.3] - 2026-07-10
 
 ### Fixed
@@ -60,6 +95,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 Competition build shipped to the 2026 Tennessee TSA State Leadership Conference — **1st place, 127 / 130**. Tagged at the shipped commit as `v1.0-competition` (the competition-evaluation date, not the date of the repository's git history).
 
 ### Added
+
+*(Corrected in v1.4: the modular FSM firmware listed below is a post-competition rewrite for portfolio clarity, not part of the shipped competition build. The firmware that actually ran at the conference is `firmware/firmware.ino`. The entries below are kept because this is the release where the repository itself was created.)*
 
 - Non-blocking finite state machine firmware for an Arduino Uno-compatible ATmega328P board (`tsa-north-star-animatronic.ino` and `src/`).
   - `StateEngine` — seven-state FSM (sensor warm-up, idle, triggered, speaking, gesture, return-to-home, rest cooldown) coordinated with `millis()`.

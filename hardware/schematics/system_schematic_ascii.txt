@@ -6,34 +6,47 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
 --------------------------------------------------------------------------------
 
                      .---.
-                    /  O  O \          <-- Painted foam head (burnt sienna)
-                    |  ___  |             with googly eyes and dark purple
-                    \  ---  /             mesh fabric headwrap
-                     `---'
-                      | |                  1/4" wooden dowel neck
+                    /  O  O \          <-- Painted foam ball head
+                    |  ___  |             (burnt sienna) with a painted
+                    \  ---  /             face and dark purple mesh
+                     `---'                fabric headwrap
+                      | |                  wooden dowel neck post
                       | |
               +-------+ +-------+
               |                 |
-     4" PVC  |    PVC T-jct     |  4" PVC
-     shoulder|    (spine top)   |  shoulder
-              |                 |
-    [SG90]--- +                 + ---[wood dowel]
-     ^         \               /         |
-     |   blue   \    1/2"     /    right arm
-  lantern      PVC       PVC        dowel + zip ties
-  arm servo    spine      spine        |
-  (D11)                    \           |
-     |                      \     [60mL syringe]
-  wood stick                  \    horizontal,
-  + popsicle                  base \  zip-tied to
-  stick lantern                     PVC + dowel
-  frame                                 |
-  with warm                             |
-  white LED                        [MG996R servo]
-  (D5)                              on plywood base
-                                    (D6) -- drives
-                                     syringe via
-                                     wood dowel linkage
+      PVC     |    PVC T-jct    |    PVC
+     shoulder |   (spine top)   |  shoulder
+       pipe   |                 |    pipe
+    [SG90]--- +                 + ---[RIGHT ARM]
+     ^         \               /            |
+     |   blue   \    1/2"     /       pivots on a plain metal
+  lantern       PVC PVC              pin through a drilled hole
+  arm servo     spine                at the shoulder. NO servo,
+  (D11)          |                   NO motor at this joint.
+     |           |                          |
+  wood dowel     |                          |
+  arm +          |                     [60mL OUTPUT syringe]
+  craft-stick    |                      horizontal, at shoulder
+  lantern        |                      plunger --> dowel link
+  frame with     |                              --> pointing arm
+  warm white     |                          ^
+  LED (D5)       |                          |
+                 |                    3/16" ID clear vinyl
+                 |                    tubing, up the spine
+                 |                    (water, tinted so it
+                 |                     is visible in the tube)
+                 |                          ^
+                 |                          |
+                 |                     [60mL DRIVE syringe]
+                 |                      horizontal on base,
+                 |                      zip-tied down
+                 |                          ^
+                 |                          |
+                 |                     [MG996R servo] (D6)
+                 |                      on plywood base,
+                 |                      pushes plunger via a
+                 |                      wooden dowel taped to
+                 |                      the servo horn
   .------------------------------------------------.
   |            PLYWOOD BASE (12" x 12")             |
   |                                                 |
@@ -53,7 +66,13 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
 
   Removable fabric shell (not shown) fits over the
   PVC skeleton for presentation. Removed in <10s
-  for judge inspection of internal mechanics.
+  for judge inspection of internal mechanics. The
+  shell MUST be removable or the entry is not
+  evaluated at all.
+
+  D10 is unallocated. It was reserved for a jaw
+  movement that was cut from scope before the
+  competition.
 
 
 2. POWER OVERVIEW
@@ -67,7 +86,10 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   |  onboard 5V rail  |      +---- 5V logic: PIR, DFPlayer, LEDs
   +-------------------+
                          |
-  4xAA BATTERY PACK (6V) |
+  4xAA BATTERY PACK      |
+  (6V nominal alkaline;  |
+   NiMH cells shown in   |
+   the competition photo)|
         |                |
         v                v
   +-------------------+  COMMON GROUND RAIL
@@ -101,7 +123,8 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   |  D6  Servo signal      ---> MG996R syringe-drive servo (on base)         |
   |  D7  Digital input     <--- HC-SR501 PIR OUT                             |
   |  D9  Servo signal      ---> MG996R head turn servo (top of PVC spine)     |
-  |  D11 Servo signal      ---> SG90 lantern arm servo (left shoulder)       |
+  |  D11 Servo signal      ---> SG90 lantern arm servo (shoulder crossbar)   |
+  |  D10 unallocated       ---  reserved for a jaw movement that was cut     |
   |  5V  Logic power       ---> PIR VCC, DFPlayer VCC, LED circuits          |
   |  GND Common ground     ---> PIR GND, DFPlayer GND, LED cathodes, servo   |
   +--------------------------------------------------------------------------+
@@ -147,7 +170,7 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   - Arduino D4 ---> 220 ohm ---> LED anode
   - LED cathode ---> Common ground
 
-  Lantern LED (warm white, in wood-stick lantern on left arm):
+  Lantern LED (warm white, inside the craft-stick lantern on the lantern arm):
   - Arduino D5 ---> 220 ohm ---> LED anode
   - LED cathode ---> Common ground
 
@@ -167,17 +190,55 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   - Signal ---> Arduino D6
   - V+     ---> 4xAA servo rail +
   - GND    ---> Common ground
-  - Drives 60mL syringe through wooden dowel linkage
-  - Syringe is horizontal, on top of base, zip-tied to right PVC + wood dowel
+  - Drives the 60mL DRIVE syringe through a wooden dowel linkage
+  - Drive syringe is horizontal, on top of the base, zip-tied down
   - Modular FSM software limits: 40-130 degrees (home = 45)
   - Competition firmware: hydroRest = 70, hydroPush = 18
+  - Push angles were found by testing: 18 verified good, 15 flagged as a
+    grinding risk (closer to the physical stop). 18 shipped.
+    If it ever grinds, go UP (19/20/21). Lower is toward the wall.
+  - Sweep step delay is 35ms/deg vs 20ms/deg on the other two servos, to give
+    the fluid column time to transfer instead of shock-loading it.
 
-  SG90 LANTERN ARM SERVO (mounted on left PVC shoulder):
+
+6b. FLUID POWER CIRCUIT (the scored fluid power requirement)
+--------------------------------------------------------------------------------
+
+  Closed two-syringe water circuit, master/slave. No pump, no reservoir.
+
+    [MG996R D6] --dowel--> [60mL DRIVE syringe, base]
+                                   |
+                          3/16" ID clear vinyl tubing
+                                   |
+                                   v
+                           [60mL OUTPUT syringe, shoulder]
+                                   |
+                              dowel link
+                                   |
+                                   v
+                           [right arm, pivots on a plain metal pin]
+
+  Water is used because it is effectively incompressible (bulk modulus
+  ~2.2 GPa). Any trapped air acts as a spring and absorbs the stroke.
+
+  FILL ORDER (do not deviate):
+    1. Fill one syringe completely. Clean water only -- soap strips the seal
+       coating and causes stiction.
+    2. Attach tubing to that syringe only; leave the far end open.
+    3. Push water through until the open end is dripping.
+    4. Attach the second, empty syringe while that end is still wet.
+
+  Realistic travel: the servo produces roughly 2 cm of reliable plunger
+  stroke. That is enough for a clearly visible gesture. Repeatable and
+  small beat ambitious and intermittent.
+
+  SG90 LANTERN ARM SERVO (zip-tied to the end of the PVC shoulder crossbar):
   - Signal ---> Arduino D11
   - V+     ---> 4xAA servo rail +
   - GND    ---> Common ground
-  - Blue-bodied micro servo with white horn
-  - Drives wood-stick lantern frame with warm white LED
+  - Blue-bodied micro servo, wires intact and powered (this one is a real
+    actuator; the unpowered joint is the pointing-arm shoulder, see 6b)
+  - Drives a wooden dowel arm carrying the craft-stick lantern and warm white LED
   - Modular FSM software limits: 60-125 degrees (home = 70)
   - Competition firmware: leftDown = 0, leftUp = 90
 
@@ -185,16 +246,28 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
 7. PHYSICAL FRAME SUMMARY
 --------------------------------------------------------------------------------
 
-  - Base:       12" x 12" x 3/4" plywood, painted white, with 4 wooden dowel feet
-  - Spine:      1/2" PVC pipe, ~14" tall, in floor flange screwed to base
-  - Shoulders:  PVC T-junction at spine top, 4" PVC pipes to elbows
-  - Head:       6" foam ball, painted burnt sienna, on 1/4" dowel
-  - Neck post:  1/4" round wooden dowel, ~4" tall, on MG996R servo horn
-  - Right arm:  5/16" wood dowel driven by 60mL syringe (MG996R on base); pivots on a plain metal pin through a drilled hole at the shoulder (no powered servo at the hinge)
-  - Left arm:   1/4" wood dowel with popsicle-stick lantern frame (SG90)
+  - Base:       ~12" x 12" plywood, painted white, with 4 short wooden dowel feet
+  - Spine:      1/2" PVC pipe rising from the base into a floor flange
+  - Shoulders:  PVC T-junction at spine top, horizontal PVC crossbar,
+                1/2" 90-degree elbow on the pointing-arm end
+  - Head:       6" foam ball, painted burnt sienna, on a wooden dowel neck post
+  - Neck post:  round wooden dowel on the MG996R servo horn
+  - Right arm:  wooden dowel driven by the OUTPUT syringe plunger through a
+                short dowel link; pivots on a plain metal pin through a drilled
+                hole at the shoulder. No powered servo at the hinge.
+  - Lantern
+    arm:        wooden dowel with a craft-stick lantern frame, driven by the
+                SG90 zip-tied to the end of the shoulder crossbar
   - Wiring:     Multi-color Dupont jumpers, zip-tied to PVC spine
   - Shell:      Fabric/clothing removable in <10 seconds for judging
-  - Fasteners:  Black nylon zip ties throughout
+  - Fasteners:  Hot glue for placement, black nylon zip ties for load. Hot glue
+                alone does not hold a servo on PVC. 4" ties were daisy-chained
+                (tail of one through the head of the next) where a single tie
+                was too short to wrap pipe plus servo.
+
+  Lengths and thicknesses beyond the base footprint and the 6" foam ball were
+  not recorded during the build and are deliberately not stated here.
+  Resting-position envelope the entry had to fit: 15" deep x 3' wide x 4' high.
 
 ================================================================================
 NOTES
@@ -203,8 +276,12 @@ NOTES
 2. Confirm capacitor polarity before powering the servo rail.
 3. Power on early enough for the PIR warm-up window (60s) to finish.
 4. Test the full sequence after transport, not just before packing.
-5. Keep syringe mechanism visible to judges — the reveal is part of scoring.
-6. The right arm dowel pivots on a plain metal pin at the shoulder; the syringe
-   pushes one end so the arm rotates around the pin to raise the pointing end.
-   No servo or motor is used at the hinge.
+5. Keep both syringes and the tubing visible to judges -- the reveal is part of
+   scoring, and fluid power is a separately scored category.
+6. The right arm pivots on a plain metal pin through a drilled hole at the
+   shoulder. The output syringe plunger pushes a short dowel link into the arm
+   so it rotates around the pin and the pointing end rises. No servo or motor
+   is used at the hinge.
+7. Write each servo's home angle BEFORE calling attach(), or the servo snaps to
+   the library default on power-up.
 ================================================================================
