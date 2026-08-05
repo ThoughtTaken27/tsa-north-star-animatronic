@@ -222,10 +222,11 @@ SYSTEM WIRING SCHEMATIC - "THE NORTH STAR" ANIMATRONIC
   ~2.2 GPa). Any trapped air acts as a spring and absorbs the stroke.
 
   FILL ORDER (do not deviate):
-    1. Fill one syringe completely. Clean water only -- soap strips the seal
+    1. Submerge one syringe in water and draw the plunger up until the barrel
+       is full with no bubbles. Clean water only -- soap strips the seal
        coating and causes stiction.
-    2. Attach tubing to that syringe only; leave the far end open.
-    3. Push water through until the open end is dripping.
+    2. Attach tubing to that syringe's nozzle; leave the far end open.
+    3. Over a sink, push the plunger in slowly until water fills the tube too.
     4. Attach the second, empty syringe while that end is still wet.
 
   Realistic travel: the servo produces roughly 2 cm of reliable plunger

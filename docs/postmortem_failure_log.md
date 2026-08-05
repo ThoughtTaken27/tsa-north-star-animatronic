@@ -27,7 +27,7 @@ Where the build notes hedge, this log hedges too. Items marked as "likely" or "f
 
 1. The HiLetgo HC-SR501 modules used here have no printed pin labels on the component side. The pinout had to be established before anything else could be trusted.
 2. The sensitivity potentiometer on this board revision behaves opposite to the direction described in most general HC-SR501 guides. Turning it the way the common guides call "maximum" was actually reducing sensitivity.
-3. The trigger-mode jumper was on the L (non-repeatable) pin pair, so the sensor would fire once and then lock out for the duration of its delay timer instead of tracking a visitor standing in front of the exhibit.
+3. Trigger mode. The HC-SR501 selects between non-repeatable (L) and repeatable (H) with a jumper across a three-pin header. In L the sensor fires once and then locks out until its delay timer expires, which is the wrong behaviour for a visitor standing in front of an exhibit. The build notes record H as the required setting. They do not record what position it shipped in, so this log does not claim the jumper was found wrong — only that H is what the exhibit needs and H is what it ran on.
 
 **What went wrong during diagnosis:** the first attempt at establishing the pinout was to try pin combinations by swapping the power and ground leads. The first sensor stopped working during that process and was set aside as likely damaged; the build notes record it as "likely damaged during wrong pin testing" rather than as a confirmed kill. The correct pinout was ultimately read off the manufacturer's product image rather than derived by trial and error. The sensors came as a 3-pack, so a fresh module was swapped in and the build continued without delay. The practical lesson stands regardless of whether that first module was actually dead: do not brute-force an unlabeled sensor's power pins when the manufacturer's own listing photo shows the order.
 
@@ -70,10 +70,12 @@ Where the build notes hedge, this log hedges too. Items marked as "likely" or "f
 
 - Used only clean water. No soap, no oil, no additives. Preserving the factory coating on the seals is the point.
 - Changed the fill order to bleed air out instead of sealing it in:
-  1. Fill one syringe completely with water.
-  2. Attach the tubing to that syringe only, leaving the other end of the tube open.
-  3. Push water through until the open end of the tube is running and dripping, so the entire tube volume is fluid.
+  1. Submerge one syringe in water and draw the plunger up until the barrel is completely full with no bubbles in it.
+  2. Attach the tubing to that syringe's nozzle. Leave the other end of the tube open.
+  3. Standing over a sink, push the plunger in slowly until the water has completely occupied the tube as well.
   4. Attach the second, empty syringe to the still-wet open end.
+
+  The order is the whole point. Drawing the water in under the surface is what keeps air out of the barrel, and pushing it through the open tube is what displaces the air out of the tube instead of trapping it. Connecting both syringes first and filling afterwards seals air into the second syringe with nowhere to go.
 - Replaced the two soap-damaged syringes. The replacements were noticeably smoother, which confirmed the coating was the variable.
 - Stored the syringes with the plunger left partway inside rather than fully removed, so the rubber seal does not dry out between sessions.
 - Slowed the drive servo sweep in firmware (`hydraulicSpeed = 35` ms per degree versus 20 for the head and lantern arm) to give the fluid column time to transfer instead of shock-loading it.
@@ -154,7 +156,11 @@ Where the build notes hedge, this log hedges too. Items marked as "likely" or "f
 
 **Reasoning:** Output is a 3 W, 8 ohm speaker in a noisy convention hall. Processing artifacts stack on top of a small speaker's own losses and reduce intelligibility, which costs more than any character gain. A fake elderly voice would also have been historically wrong — the exhibit depicts Tubman around 1849, when she was roughly 27.
 
-**Resolution:** Recorded plain, unprocessed, by a female voice, quiet and slow, in a clothes-filled closet to kill room echo. Exported as `0001.mp3` into the `/mp3` folder on the card. Final narration length is 33 seconds, which is the number the firmware's `audioLengthSeconds` is set to and which the entire show timeline is derived from.
+**Direction given:** find a real female voice rather than processing a male one, record it plain, slow and quiet, in a small soft-furnished space to cut room echo, and export it as `0001.mp3` into the `/mp3` folder on the card.
+
+**What the record actually shows:** the narration was re-recorded and re-exported at least once, and the build log notes that a voice-changer-processed file was on the card as of April 9. Whether the file that played at competition was processed or plain is not recorded, so this log does not claim either. The reasoning above is why processing was argued against; it is not a claim about the final file.
+
+Independently verifiable: the show timeline is built on `audioLengthSeconds = 33`, so the narration the firmware was tuned against is 33 seconds long.
 
 ## 13. Competition-Day Backdrop Recovery
 

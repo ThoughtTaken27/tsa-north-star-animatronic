@@ -10,7 +10,7 @@ Full line-by-line audit of the repository against the complete build record (the
 
 ### Fixed
 
-- **Fabricated hydraulic fill procedure removed.** `docs/postmortem_failure_log.md` said the system was filled "by submerging the tubing and forcing water through both syringes" and bled "with the tubing end submerged." There was never a fluid reservoir to submerge anything in. This was a known fabrication from an earlier AI-written draft of the project narrative and it had leaked into the repo. Replaced with the actual four-step procedure: fill one syringe, attach tubing to that syringe only, push until the open end drips, then attach the second empty syringe while the end is still wet.
+- **Hydraulic fill procedure corrected.** The repo said the system was filled "by submerging the tubing and forcing water through both syringes" and bled "by cycling the plunger with the tubing end submerged." Neither is what happened, and "forcing water through both syringes" describes the exact mistake the procedure exists to avoid. Replaced with the real method: submerge one syringe and draw the plunger up until the barrel is bubble-free, attach the tubing to that syringe's nozzle only, push the plunger in slowly over a sink until water fills the tube as well, then attach the second empty syringe while that end is still wet. Submerging is involved — the syringe is drawn full under the surface — but there is no reservoir and the second syringe is never coupled underwater.
 - **Stiction causality was backwards.** The postmortem said "the syringe's factory coating caused stiction after extended use." The opposite is true: the factory coating is what prevents stiction, and dish soap added to the water as a lubricant stripped it, ruining two syringes. Rewritten with the correct cause and the correct fix (clean water only, preserve the coating).
 - **PIR failure symptom was wrong.** The postmortem described the HC-SR501 problem as false triggering. The build record shows the opposite: the sensor did not usefully trigger at all for roughly two days. Rewritten with the real symptom and the three real causes (unlabeled pinout, reversed sensitivity potentiometer on this board revision, jumper on L instead of H).
 - **Damaged first sensor was omitted.** The postmortem credited "exhaustive testing" of pin combinations as the fix. Trying pin combinations is what took the first sensor out; the build notes record it as "likely damaged during wrong pin testing," and this entry keeps that hedge rather than upgrading it to a confirmed kill. The correct pinout came from the manufacturer's product image, and a fresh module from the 3-pack was swapped in.
@@ -26,7 +26,7 @@ Full line-by-line audit of the repository against the complete build record (the
 
 ### Added
 
-- **Five previously undocumented build failures and decisions** in `docs/postmortem_failure_log.md`: the macOS Arduino IDE library/permissions failure (`DFRobotDFPlayerMini.h: No such file or directory`) that ate time from the audio-debugging budget while being a toolchain problem, recorded honestly as "resolved by several fixes applied together" because no single root cause was isolated; the power-up servo jump and the `write()`-before-`attach()` fix, which is visible in the shipped firmware's own comments; the decision to mount the fluid power assembly on top of the base after the under-base idea ran out of clearance; the jaw movement scope cut and the resulting unallocated D10; and the narration decision to reject a voice changer in favour of a plain unprocessed recording. The hot glue plus zip tie mounting method moved into `hardware/mechanical_assembly.md` as build practice rather than being written up as a failure event, since the notes record it as a rule that was followed, not a mount that tore off.
+- **Five previously undocumented build failures and decisions** in `docs/postmortem_failure_log.md`: the macOS Arduino IDE library/permissions failure (`DFRobotDFPlayerMini.h: No such file or directory`) that ate time from the audio-debugging budget while being a toolchain problem, recorded honestly as "resolved by several fixes applied together" because no single root cause was isolated; the power-up servo jump and the `write()`-before-`attach()` fix, which is visible in the shipped firmware's own comments; the decision to mount the fluid power assembly on top of the base after the under-base idea ran out of clearance; the jaw movement scope cut and the resulting unallocated D10; and the narration/voice direction, recorded as direction given rather than as a claim about the final audio file. The hot glue plus zip tie mounting method moved into `hardware/mechanical_assembly.md` as build practice rather than being written up as a failure event, since the notes record it as a rule that was followed, not a mount that tore off.
 - **Hydraulic servo angle history.** Push angles were found by testing, not calculation: 18 degrees verified good and shipped; a later trial at 15 was flagged as a grinding risk because it sits closer to the physical stop. Recorded in the postmortem, assembly guide, and schematic, along with the direction to move if grinding ever appeared (up, never down).
 - **The April 9 DFPlayer recurrence is documented.** It failed again at the hotel after travel and a re-recorded audio file, was worked through a four-step checklist, and was working for the competition the next day. Which step was the actual fix was never written down, so the repo names the checklist and does not name a root cause.
 - **DFPlayer graceful-degradation behavior** documented as a deliberate reliability decision rather than an incidental code branch.
@@ -38,6 +38,17 @@ Full line-by-line audit of the repository against the complete build record (the
 ### Changed
 
 - Code contribution attribution in `docs/engineering_notebook.md` now states that the firmware was written with help from a friend, matching the build record, rather than implying it was written solo.
+
+### Explicitly Not Claimed
+
+A short list of things the build record does not settle, kept here so future edits do not quietly harden them into facts:
+
+- Whether the narration file that played at competition was voice-changed or plain. A processed file is recorded as being on the card on April 9; the direction given was to use an unprocessed female voice. The log states the direction and stops there.
+- What position the PIR trigger-mode jumper shipped in. H is recorded as the required setting and is what it ran on; "it was found on L" is not in the notes.
+- Which of the four checklist steps actually fixed the April 9 DFPlayer failure.
+- Which of the four fixes actually resolved the macOS Arduino IDE library error.
+- Whether the first PIR sensor was genuinely dead. The notes say "likely damaged."
+- Any frame dimension beyond the base footprint and the 6 in foam ball.
 
 ## [v1.3] - 2026-07-10
 

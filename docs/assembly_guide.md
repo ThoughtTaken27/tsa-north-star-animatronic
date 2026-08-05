@@ -38,9 +38,9 @@ Setup notes:
 
 Do not connect both syringes and then fill — that seals air into the second syringe with no exit path, and trapped air compresses instead of transferring force.
 
-1. Fill one syringe completely with clean water. No soap, no oil, no additives; they strip the seal coating and cause stiction.
-2. Attach the tubing to that syringe only. Leave the far end of the tube open.
-3. Push water through until the open end is running and dripping, so the whole tube is fluid.
+1. Submerge one syringe in water and draw the plunger up until the barrel is completely full with no bubbles. Clean water only — no soap, no oil, no additives; they strip the seal coating and cause stiction.
+2. Attach the tubing to that syringe's nozzle. Leave the far end of the tube open.
+3. Over a sink, push the plunger in slowly until the water has completely occupied the tube as well.
 4. Attach the second, empty syringe while that end is still wet.
 
 Between sessions, empty the water but leave the plungers partway in rather than fully removed, so the seals do not dry out.

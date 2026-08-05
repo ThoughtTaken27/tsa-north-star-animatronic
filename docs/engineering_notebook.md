@@ -53,7 +53,7 @@ Dated anchors from receipts and the competition record:
 - Secured exposed wiring and servo leads to survive the removable-shell reveal.
 - Tuned PIR sensitivity and jumper mode and added a mandatory 60-second warm-up period. An earlier attempt to establish the unlabeled pinout by trying pin combinations likely damaged the first sensor; a fresh module from the 3-pack was swapped in.
 - Fixed DFPlayer SD-card seating, format, and file naming issues, and resolved a separate macOS Arduino IDE library/permissions failure that had been masquerading as an audio problem.
-- Rewrote the show timeline around `millis()` so the pointing gesture fires at a fixed offset from audio start rather than drifting with servo sweep durations. The offset was tuned by ear across three revisions: 20 s, then 19 s, then the final 18 s.
+- Rewrote the show timeline around `millis()` so the pointing gesture fires at a fixed offset from audio start rather than drifting with servo sweep durations. The offset was moved earlier across three revisions: 20 s, then 19 s, then the 18 s that shipped.
 - Practiced the reveal and sequence timing before competition.
 
 ### Competition

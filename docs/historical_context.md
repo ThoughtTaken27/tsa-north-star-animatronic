@@ -14,8 +14,8 @@ The figure is set around 1849, roughly the time of Tubman's own escape north, wh
 
 That choice drove production decisions:
 
-- The narration is voiced plain and unprocessed by a young female voice. No voice changer, no performed "old woman" voice. A fake elderly voice would have been historically wrong for 1849 and would have degraded badly through a 3 W speaker in a loud hall.
-- The delivery is quiet, slow, and close — the register of someone giving directions in the dark while trying not to be heard — rather than theatrical.
+- A female voice was sought rather than performing a fake elderly one. An elderly voice would have been historically wrong for 1849, and heavy processing degrades badly through a 3 W speaker in a loud hall.
+- The delivery was directed quiet, slow and close — the register of someone giving directions in the dark while trying not to be heard — rather than theatrical.
 
 ## Why the North Star
 
@@ -36,4 +36,4 @@ The North Star works as both history and mechanism:
 
 The exhibit is a symbolic educational scene, not a claim that one specific recorded Tubman escape looked exactly like the presentation. The mechanical choices support the theme while keeping the project buildable and reliable for competition.
 
-The narration deliberately avoids depicting violence or suffering. It is written for a child in a museum: she is a guide, not a spectacle, and the whole message compresses to one line a seven-year-old can carry out of the room — when you feel lost, find your light and keep walking. The 33-second runtime was chosen with the same audience in mind.
+The narration deliberately avoids depicting violence or suffering. It is written for a child in a museum: she is a guide, not a spectacle, and the whole message compresses to one line a seven-year-old can carry out of the room — when you feel lost, find your light and keep walking. The narration the firmware is timed against runs 33 seconds.
