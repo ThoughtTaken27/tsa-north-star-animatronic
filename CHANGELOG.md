@@ -4,6 +4,12 @@ All notable changes to "The North Star" animatronic repository are documented in
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/).
 
+## [v1.4.1] - 2026-10-14
+
+### Fixed
+
+- **Soap description matched to the build record.** The build record says dish soap was used as a syringe/plunger lubricant and ruined two syringes; it does not say the soap was mixed into the hydraulic water. The postmortem, evidence summary, and v1.4 entry now say "used as a plunger lubricant" instead of "added to the water."
+
 ## [v1.4] - 2026-08-05
 
 Full line-by-line audit of the repository against the complete build record (the March 28 project-transfer document plus the April 8-13 build/debug session log) and against the four build photographs. Every claim in every file was checked. The corrections below are the ones that were wrong. Where the source notes hedge, the docs now hedge with them instead of hardening a maybe into a fact.
@@ -11,7 +17,7 @@ Full line-by-line audit of the repository against the complete build record (the
 ### Fixed
 
 - **Hydraulic fill procedure corrected.** The repo said the system was filled "by submerging the tubing and forcing water through both syringes" and bled "by cycling the plunger with the tubing end submerged." Neither is what happened, and "forcing water through both syringes" describes the exact mistake the procedure exists to avoid. Replaced with the real method: submerge one syringe and draw the plunger up until the barrel is bubble-free, attach the tubing to that syringe's nozzle only, push the plunger in slowly over a sink until water fills the tube as well, then attach the second empty syringe while that end is still wet. Submerging is involved — the syringe is drawn full under the surface — but there is no reservoir and the second syringe is never coupled underwater.
-- **Stiction causality was backwards.** The postmortem said "the syringe's factory coating caused stiction after extended use." The opposite is true: the factory coating is what prevents stiction, and dish soap added to the water as a lubricant stripped it, ruining two syringes. Rewritten with the correct cause and the correct fix (clean water only, preserve the coating).
+- **Stiction causality was backwards.** The postmortem said "the syringe's factory coating caused stiction after extended use." The opposite is true: the factory coating is what prevents stiction, and dish soap used as a plunger lubricant stripped it, ruining two syringes. Rewritten with the correct cause and the correct fix (clean water only, preserve the coating).
 - **PIR failure symptom was wrong.** The postmortem described the HC-SR501 problem as false triggering. The build record shows the opposite: the sensor did not usefully trigger at all for roughly two days. Rewritten with the real symptom and the three real causes (unlabeled pinout, reversed sensitivity potentiometer on this board revision, jumper on L instead of H).
 - **Damaged first sensor was omitted.** The postmortem credited "exhaustive testing" of pin combinations as the fix. Trying pin combinations is what took the first sensor out; the build notes record it as "likely damaged during wrong pin testing," and this entry keeps that hedge rather than upgrading it to a confirmed kill. The correct pinout came from the manufacturer's product image, and a fresh module from the 3-pack was swapped in.
 - **Right/left arm convention stated explicitly.** "Right arm" now means the arm on the viewer's right as they face the exhibit, which is the syringe-driven pointing arm. The docs previously used "right-side" without ever defining the reference frame, which made the mechanical description ambiguous. The plain metal pin shoulder pivot is confirmed correct and unchanged; the pre-competition notes had floated a gutted SG90 body as the dead hinge instead, which is not what was built, and `docs/evidence_summary.md` now says so.

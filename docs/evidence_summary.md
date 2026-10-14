@@ -28,7 +28,7 @@ Amazon purchase screenshots dated March 7, 2026 verify:
 - FymuSing 1000 uF 25V electrolytic capacitors.
 - Chanzon warm white 5 mm LEDs.
 - Chanzon 60-value 1/4 W resistor kit.
-- 60 mL plastic liquid syringes (multipack; two are in the final build as the drive and output halves of the fluid power circuit, and two more were ruined during development by using dish soap in the water).
+- 60 mL plastic liquid syringes (multipack; two are in the final build as the drive and output halves of the fluid power circuit, and two more were ruined during development by using dish soap as a plunger lubricant).
 - 3/16 in inner diameter clear vinyl tubing (10 ft).
 - Dupont jumper wires.
 - 4xAA switched battery holder.

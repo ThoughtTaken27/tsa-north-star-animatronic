@@ -80,7 +80,7 @@ The 12 entries below consolidate those 23 traps into the failure modes that actu
 **Cause:** Two independent problems that looked like one intermittent problem.
 
 1. **Trapped air.** Air inside the vinyl tubing acts as a spring. It compresses under pressure and absorbs part of the drive servo's stroke before the output syringe extends. Water is used precisely because it is effectively incompressible (bulk modulus ~2.2 GPa); any air pocket reintroduces compressibility and softens the force transfer unpredictably. Connecting both syringes and then filling guarantees trapped air, because the air in the second syringe has no exit path.
-2. **Stiction from dish soap.** Dish soap was added to the water early in development on the assumption that it would lubricate the plungers. It did the opposite: it stripped the factory coating from the rubber seals, leaving static friction much higher than kinetic friction. The plunger would resist starting its stroke and then break away suddenly, so the arm motion varied cycle to cycle even when the servo swept identically. Two syringes were ruined this way before the cause was identified.
+2. **Stiction from dish soap.** Early in development, dish soap was used as a plunger lubricant on the assumption that it would help the plungers slide. It did the opposite: it stripped the factory coating from the rubber seals, leaving static friction much higher than kinetic friction. The plunger would resist starting its stroke and then break away suddenly, so the arm motion varied cycle to cycle even when the servo swept identically. Two syringes were ruined this way before the cause was identified.
 
 **Fix:**
 
